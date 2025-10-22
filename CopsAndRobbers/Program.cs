@@ -43,19 +43,29 @@
             city.DrawingClass(canvas, 0, 0);                       // draw the City 
             prison.DrawingClass(canvas, city.Height + 1, 0);      // draw Prison with a 1-line gap
 
-            // Draw characters onto the canvas 
-            foreach (var p in characters)
-            {
-                // Ensure coordinates are within the canvas
-                if (p.X >= 0 && p.X < totalHeight && p.Y >= 0 && p.Y < totalWidth)
-                    canvas[p.X, p.Y] = p.Character[0];
-            }
+            //// Draw characters onto the canvas 
+            //foreach (var p in characters)
+            //{
+            //    // Ensure coordinates are within the canvas
+            //    if (p.X >= 0 && p.X < totalHeight && p.Y >= 0 && p.Y < totalWidth)
+            //        canvas[p.X, p.Y] = p.Character[0];
+            //}
 
 
             Console.WriteLine();
 
             // Draw everything on the console
             Place.UpdateDrawing(canvas);
+
+            // Draw characters with color on top of the field
+            foreach (var p in characters)
+            {
+                p.Draw(); // Use Charactercolor
+            }
+
+
+            // Leave one empty line after field
+            Console.SetCursorPosition(0, city.Height + prison.Height + 2);
 
             // Print all characters info to console
             Console.WriteLine("Characters and their inventories:");
