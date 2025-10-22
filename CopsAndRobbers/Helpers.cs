@@ -3,7 +3,7 @@
     internal class Helpers
     {
 
-        public static string[,] DrawingClass()
+        public static string[,] DrawingClassInitilize()
         {
             string[,] drawingCreated = new string[10, 15];
 
@@ -30,7 +30,32 @@
             return drawingCreated;
         }
 
-        public static string[,] UpdateDrawing(string[,] drawingImport)  // den uppdaterade teckningen
+
+
+        public static void WipeDrawing(string[,] drawingCreated)
+        {
+            for (int row = 0; row < drawingCreated.GetLength(0); row++)
+            {
+                for (int col = 0; col < drawingCreated.GetLength(1); col++)
+                {
+                    if (row == 0 || row == drawingCreated.GetLength(0) - 1 ||  // top and bottom borders
+                        col == 0 || col == drawingCreated.GetLength(1) - 1)   // left and right borders
+                    {
+                        drawingCreated[row, col] = "#";  // border
+                    }
+                    else
+                    {
+                        drawingCreated[row, col] = " ";  // empty space
+                    }
+                }
+            }
+        }
+
+
+
+
+
+        public static string[,] RedrawDrawing(string[,] drawingImport)  // den uppdaterade teckningen
         {
             Console.Clear();
 
