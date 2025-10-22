@@ -38,7 +38,7 @@
             //kan ej använda DrawingClassInitilize då den är kopplad till att göra en ny array för drawing.
             //Denna skriver inte heller ut till konsollen och ritar upp något. allt flyter på bättre. Den rensar endast rutorna mellan flytten.
             //kan beskrivas som bowling mellan varje plan rensing
-            Helpers.WipeDrawing(drawing);
+            Rita.WipeDrawing(drawing);
 
             // Draw characters onto the grid based on position tracker   move thorugh "array of lists"
             for (int row = 0; row < positions.GetLength(0); row++)
@@ -60,7 +60,7 @@
                 }
             }
 
-            Helpers.RedrawDrawing(drawing);
+            Rita.RedrawDrawing(drawing);
         }
     }
 }

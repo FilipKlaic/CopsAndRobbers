@@ -1,6 +1,6 @@
 ﻿namespace CopsAndRobbers
 {
-    internal class Helpers
+    internal class Rita
     {
 
         public static string[,] DrawingClassInitilize()

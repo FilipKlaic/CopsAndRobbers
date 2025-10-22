@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            string[,] drawing = Helpers.DrawingClassInitilize();
+            string[,] drawing = Rita.DrawingClassInitilize();
 
             Random rnd = new Random();
 
