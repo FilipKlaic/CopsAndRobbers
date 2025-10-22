@@ -60,7 +60,11 @@
             // Draw characters with color on top of the field
             foreach (var p in characters)
             {
-                p.Draw(); // Use Charactercolor
+                // Ensure character stays inside City borders (avoid frame)
+                if (p.X > 0 && p.X < city.Height - 1 && p.Y > 0 && p.Y < city.Width - 1)
+                {
+                    p.Draw(); // Use Charactercolor
+                }
             }
 
 
