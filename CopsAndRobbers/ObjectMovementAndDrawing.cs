@@ -58,7 +58,11 @@
 
                             
                             
-                            //ärva saker ?
+                            //ärva saker     tittar vilka karaktärer som möts.
+                            // skriva ut träffen.
+                            // ta bort karaktärer (fängelset)
+                            
+
                         }
                     }
                 }
