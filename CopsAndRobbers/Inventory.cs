@@ -34,7 +34,7 @@ namespace CopsAndRobbers
         public void ShowItems()
         {
             if (Items.Count == 0)
-                Console.WriteLine("tomt");
+                Console.WriteLine("Inventory list is empty");
             else
                 Console.WriteLine(string.Join(", ", Items));
         }

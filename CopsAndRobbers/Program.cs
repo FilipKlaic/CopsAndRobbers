@@ -4,123 +4,159 @@
     {
         static void Main(string[] args)
         {
-            //string[,] drawing = Helpers.DrawingClass();
-            
             Random rnd = new Random();
 
-            List<Person> list = new List<Person>
-            {
-                new Civilian(5, 5),
-                new Thief(5, 5),
-                new Police(5, 5)
-            };
+            //List<Person> list = new List<Person>
+            //     {
+            //    new Civilian(5, 5),
+            //    new Thief(5, 5),
+            //    new Police(5, 5)
+            //};
+
+            // Create characters without coordinates
+            List<Person> characters = new List<Person>
+    {
+        new Civilian(),
+        new Thief(),
+        new Police()
+    };
 
             // Create two new objects: City and Prison
             City city = new City();
             Prison prison = new Prison();
 
+            // Assign random positions inside the City
+            foreach (var p in characters)
+            {
+                p.X = rnd.Next(1, city.Height - 1); // rows, avoid borders
+                p.Y = rnd.Next(1, city.Width - 1);  // columns, avoid borders
+            }
 
-            int totalHeight = city.Height + prison.Height + 1;  // calculate total screen size
-
+            // Determine total canvas size
+            int totalHeight = city.Height + prison.Height + 1;   // calculate total screen size
             int totalWidth = Math.Max(city.Width, prison.Width); // use the wider place as width
 
-            // Create a "canvas" to draw the places
-            char[,] drawingCreated = new char[totalHeight, totalWidth];
+            // Create a "canvas" (2D array) to draw the places 
+            char[,] canvas = new char[totalHeight, totalWidth];
 
 
-            city.DrawingClass(drawingCreated, 0, 0); // draw the City
+            city.DrawingClass(canvas, 0, 0);                       // draw the City 
+            prison.DrawingClass(canvas, city.Height + 1, 0);      // draw Prison with a 1-line gap
 
-            prison.DrawingClass(drawingCreated, city.Height + 1, 0); // draw Prison with a 1-line gap
+            // Draw characters onto the canvas 
+            foreach (var p in characters)
+            {
+                // Ensure coordinates are within the canvas
+                if (p.X >= 0 && p.X < totalHeight && p.Y >= 0 && p.Y < totalWidth)
+                    canvas[p.X, p.Y] = p.Character[0];
+            }
 
 
-            Place.UpdateDrawing(drawingCreated); // print the screen on the console 
+            Console.WriteLine();
+
+            // Draw everything on the console
+            Place.UpdateDrawing(canvas);
+
+            // Print all characters info to console
+            Console.WriteLine("Characters and their inventories:");
+            foreach (var p in characters)
+            {
+                Console.WriteLine($"{p.Character} at ({p.X}, {p.Y}) ; Inventory: {string.Join(", ", p.Inventory.Items)}");
+
+                //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y})");
+                //p.ShowInventory();  // Display inventory
+            }
+
+            // Pause to keep console open
+            Console.WriteLine("\nPress any key to exit...");
+            Console.ReadKey();
+        
 
 
-            Console.ReadKey(); // pause so the console stays open
 
 
-    //        while (true)
-    //        {
-    //            // Create a 2D array of lists to track which characters are at each grid position
-    //            // This allows multiple characters to occupy the same cell
-    //            List<Person>[,] positions = new List<Person>[drawing.GetLength(0), drawing.GetLength(1)];
-                
-    //            // Initialize every cell with an empty list
-    //            for (int i = 0; i < positions.GetLength(0); i++)
-    //            {
-    //                for (int j = 0; j < positions.GetLength(1); j++)
-    //                {
-    //                    positions[i, j] = new List<Person>();
-    //                }
-    //            }
+        //        while (true)
+        //        {
+        //            // Create a 2D array of lists to track which characters are at each grid position
+        //            // This allows multiple characters to occupy the same cell
+        //            List<Person>[,] positions = new List<Person>[drawing.GetLength(0), drawing.GetLength(1)];
 
-    //            // Move each character randomly
-    //            foreach (var p in list)
-    //            {
-    //                // Generate random movement: -1, 0, or 1 for both X and Y
-    //                int dx = rnd.Next(-1, 2); // horizontal movement
-    //                int dy = rnd.Next(-1, 2); // vertical movement
-                    
-    //                // Calculate new position and clamp to stay inside borders
-    //                // Math.Clamp prevents moving into border (row/col 0 or last row/col)
-    //                int newX = Math.Clamp(p.X + dx, 1, drawing.GetLength(0) - 2);
-    //                int newY = Math.Clamp(p.Y + dy, 1, drawing.GetLength(1) - 2);
+        //            // Initialize every cell with an empty list
+        //            for (int i = 0; i < positions.GetLength(0); i++)
+        //            {
+        //                for (int j = 0; j < positions.GetLength(1); j++)
+        //                {
+        //                    positions[i, j] = new List<Person>();
+        //                }
+        //            }
 
-    //                // Update character's position (overlapping is allowed)
-    //                p.X = newX;
-    //                p.Y = newY;
+        //            // Move each character randomly
+        //            foreach (var p in list)
+        //            {
+        //                // Generate random movement: -1, 0, or 1 for both X and Y
+        //                int dx = rnd.Next(-1, 2); // horizontal movement
+        //                int dy = rnd.Next(-1, 2); // vertical movement
 
-    //                // Add this character to the position tracker at their new location
-    //                positions[p.X, p.Y].Add(p);
-    //            }
+        //                // Calculate new position and clamp to stay inside borders
+        //                // Math.Clamp prevents moving into border (row/col 0 or last row/col)
+        //                int newX = Math.Clamp(p.X + dx, 1, drawing.GetLength(0) - 2);
+        //                int newY = Math.Clamp(p.Y + dy, 1, drawing.GetLength(1) - 2);
 
-    //            // Reset the entire grid to borders (#) and empty spaces ( )
-    //            for (int row = 0; row < drawing.GetLength(0); row++)
-    //            {
-    //                for (int col = 0; col < drawing.GetLength(1); col++)
-    //                {
-    //                    // Check if current cell is on the border (top, bottom, left, or right edge)
-    //                    if (row == 0 || row == drawing.GetLength(0) - 1 ||
-    //                        col == 0 || col == drawing.GetLength(1) - 1)
-    //                    {
-    //                        drawing[row, col] = "#"; // Border
-    //                    }
-    //                    else
-    //                    {
-    //                        drawing[row, col] = " "; // Empty interior space
-    //                    }
-    //                }
-    //            }
+        //                // Update character's position (overlapping is allowed)
+        //                p.X = newX;
+        //                p.Y = newY;
 
-    //            // Draw characters onto the grid based on position tracker
-    //            for (int row = 0; row < positions.GetLength(0); row++)
-    //            {
-    //                for (int col = 0; col < positions.GetLength(1); col++)
-    //                {
-    //                    // Check if any characters are at this position
-    //                    if (positions[row, col].Count > 0)
-    //                    {
-    //                        if (positions[row, col].Count == 1)
-    //                        {
-    //                            // Only one character here: show their letter (C, T, or P)
-    //                            drawing[row, col] = positions[row, col][0].Character;
-    //                        }
-    //                        else
-    //                        {
-    //                            // Multiple characters here: show the count as a number (2, 3, etc.)
-    //                            drawing[row, col] = positions[row, col].Count.ToString();
-    //                        }
-    //                    }
-    //                    // If Count is 0, the cell remains empty (" ") from the reset step
-    //                }
-    //            }
+        //                // Add this character to the position tracker at their new location
+        //                positions[p.X, p.Y].Add(p);
+        //            }
 
-    //            // Clear the console and display the updated grid
-    //            Helpers.UpdateDrawing(drawing);
+        //            // Reset the entire grid to borders (#) and empty spaces ( )
+        //            for (int row = 0; row < drawing.GetLength(0); row++)
+        //            {
+        //                for (int col = 0; col < drawing.GetLength(1); col++)
+        //                {
+        //                    // Check if current cell is on the border (top, bottom, left, or right edge)
+        //                    if (row == 0 || row == drawing.GetLength(0) - 1 ||
+        //                        col == 0 || col == drawing.GetLength(1) - 1)
+        //                    {
+        //                        drawing[row, col] = "#"; // Border
+        //                    }
+        //                    else
+        //                    {
+        //                        drawing[row, col] = " "; // Empty interior space
+        //                    }
+        //                }
+        //            }
 
-    //            // Wait for user to press any key before next frame (manual step-through)
-    //            Console.ReadKey();
-    //        }
-       }
+        //            // Draw characters onto the grid based on position tracker
+        //            for (int row = 0; row < positions.GetLength(0); row++)
+        //            {
+        //                for (int col = 0; col < positions.GetLength(1); col++)
+        //                {
+        //                    // Check if any characters are at this position
+        //                    if (positions[row, col].Count > 0)
+        //                    {
+        //                        if (positions[row, col].Count == 1)
+        //                        {
+        //                            // Only one character here: show their letter (C, T, or P)
+        //                            drawing[row, col] = positions[row, col][0].Character;
+        //                        }
+        //                        else
+        //                        {
+        //                            // Multiple characters here: show the count as a number (2, 3, etc.)
+        //                            drawing[row, col] = positions[row, col].Count.ToString();
+        //                        }
+        //                    }
+        //                    // If Count is 0, the cell remains empty (" ") from the reset step
+        //                }
+        //            }
+
+        //            // Clear the console and display the updated grid
+        //            Helpers.UpdateDrawing(drawing);
+
+        //            // Wait for user to press any key before next frame (manual step-through)
+        //            Console.ReadKey();
+        //        }
     }
+}
 }

@@ -25,7 +25,7 @@ namespace CopsAndRobbers
         // Creates the drawing (similar to DrawingClass)
         public virtual void DrawingClass(char[,] drawingCreated, int startRow, int startCol)
         {
-            Console.Clear();
+            //Console.Clear();
 
             // Top border with title
             string topLine = "======" + Title + "===";
@@ -57,7 +57,7 @@ namespace CopsAndRobbers
         // Updates or prints the drawing (similar to UpdateDrawing)
         public static void UpdateDrawing(char[,] drawingImport)
         {
-            Console.Clear();
+            //Console.Clear();
 
             for (int row = 0; row < drawingImport.GetLength(0); row++)
             {
