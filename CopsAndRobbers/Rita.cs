@@ -53,7 +53,7 @@
 
 
 
-
+        
 
         public static string[,] RedrawDrawing(string[,] drawingImport)  // den uppdaterade teckningen
         {
