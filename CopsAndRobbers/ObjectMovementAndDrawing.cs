@@ -54,7 +54,14 @@
                         }
                         else
                         {
+
+
                             drawing[row, col] = positions[row, col].Count.ToString();
+
+
+                            //ärva saker ?
+
+
                         }
                     }
                 }
