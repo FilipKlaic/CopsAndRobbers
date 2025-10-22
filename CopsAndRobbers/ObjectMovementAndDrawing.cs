@@ -54,20 +54,19 @@
                         }
                         else
                         {
-
-
                             drawing[row, col] = positions[row, col].Count.ToString();
 
-
+                            Console.WriteLine(positions[row, col].Count.ToString());
+                            
                             //ärva saker ?
-
-
+                            Thread.Sleep(5000);
                         }
                     }
                 }
             }
 
             Rita.RedrawDrawing(drawing);
+            
         }
     }
 }
