@@ -6,14 +6,18 @@
         public int Y { get; set; }
         public string Character { get; set; }
         public ConsoleColor Charactercolor { get; set; }
+        public string Name { get; set; }
+        public string RoleName { get; set; }
         public Inventory Inventory { get; set; } = new Inventory(); // Inventory is created automatically for all objects
 
-        public Person() { }
+        //public Person() { }
 
-        public Person(int x, int y)
+        public Person(int x, int y, string name, string roleName)
         {
             X = x;
             Y = y;
+            Name = name;
+            RoleName = roleName;
             // X and Y are used when the character's position is set during creation.
             // If positions are assigned randomly later, this constructor can be omitted
             // and the simpler initialization can be used instead, for example:
@@ -31,10 +35,9 @@
             Console.ResetColor();
         }
 
-        public void ShowInventory()
+        public void ShowPersonsInfo()
         {
-            Console.Write($"{Character} inventory: ");
-            Inventory.ShowItems();
+            Console.WriteLine($"{RoleName} \'{Name}\' at position ({X}, {Y}) | Inventory: {string.Join(", ", Inventory.Items)}");
         }
     }
 
@@ -45,48 +48,48 @@
 
     class Thief : Person
     {
-        public Thief(int randomX, int randomY) : base(randomX, randomY)
+        public Thief(int randomX, int randomY, string name = "Unknown Thief") : base(randomX, randomY, name, "Thief")
         {
             Character = "T";
             Charactercolor = ConsoleColor.Red;
         }
 
-        public Thief()
-        {
-            Character = "T";
-            Charactercolor = ConsoleColor.Red;
-        }
+        //public Thief()
+        //{
+        //    Character = "T";
+        //    Charactercolor = ConsoleColor.Red;
+        //}
     }
 
     class Police : Person
     {
-        public Police(int randomX, int randomY) : base(randomX, randomY)
+        public Police(int randomX, int randomY, string name = "Unknown Police officer") : base(randomX, randomY, name, "Police officer")
         {
             Character = "P";
             Charactercolor = ConsoleColor.Blue;
         }
 
-        public Police()
-        {
-            Character = "P";
-            Charactercolor = ConsoleColor.Blue;
-        }
+        //public Police()
+        //{
+        //    Character = "P";
+        //    Charactercolor = ConsoleColor.Blue;
+        //}
     }
 
     class Civilian : Person
     {
-        public Civilian(int randomX, int randomY) : base(randomX, randomY)
+        public Civilian(int randomX, int randomY, string name = "Unknown Civilian") : base(randomX, randomY, name, "Civilian")
         {
             Character = "C";
             Charactercolor = ConsoleColor.Green;
             Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
         }
 
-        public Civilian()
-        {
-            Character = "C";
-            Charactercolor = ConsoleColor.Green;
-            Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
-        }
+        //public Civilian()
+        //{
+        //    Character = "C";
+        //    Charactercolor = ConsoleColor.Green;
+        //    Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
+        //}
     }
 }

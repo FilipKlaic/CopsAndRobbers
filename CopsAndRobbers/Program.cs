@@ -16,9 +16,15 @@
             // Create characters without coordinates
             List<Person> characters = new List<Person>
     {
-        new Civilian(),
-        new Thief(),
-        new Police()
+        new Civilian(0,0,"Jonsson"),
+        new Civilian(0,0,"Svensson"),
+        new Civilian(0,0,"Olofsson"),
+        new Thief(0,0,"Silverstedt"),
+        new Thief(0,0,"Brorson"),
+        new Thief(0,0,"Olsson"),
+        new Police(0,0,"Johansson"),
+        new Police(0,0,"Karlsson"),
+        new Police(0,0,"Nilsson")
     };
 
             // Create two new objects: City and Prison
@@ -75,10 +81,10 @@
             Console.WriteLine("Characters and their inventories:");
             foreach (var p in characters)
             {
-                Console.WriteLine($"{p.Character} at ({p.X}, {p.Y}) ; Inventory: {string.Join(", ", p.Inventory.Items)}");
+                //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y}) ; Inventory: {string.Join(", ", p.Inventory.Items)}");
 
                 //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y})");
-                //p.ShowInventory();  // Display inventory
+                p.ShowPersonsInfo();  // Display inventory
             }
 
             // Pause to keep console open
