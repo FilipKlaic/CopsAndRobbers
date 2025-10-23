@@ -33,13 +33,6 @@
             Name = "Thief";
             Charactercolor = ConsoleColor.Red;
         }
-
-        public Thief()
-        {
-            Character = "T";
-            Name = "Thief";
-            Charactercolor = ConsoleColor.Red;
-        }
     }
 
     class Police : Person
@@ -51,26 +44,11 @@
             Charactercolor = ConsoleColor.Blue;
         }
 
-        public Police()
-        {
-            Character = "P";
-            Name = "Police";
-
-            Charactercolor = ConsoleColor.Blue;
-        }
     }
 
     class Civilian : Person
     {
         public Civilian(int randomX, int randomY) : base(randomX, randomY)
-        {
-            Character = "C";
-            Name = "Civilian";
-
-            Charactercolor = ConsoleColor.Green;
-        }
-
-        public Civilian()
         {
             Character = "C";
             Name = "Civilian";
