@@ -31,7 +31,7 @@
         }
 
 
-
+        //rensar gamla drawing mellan att karaktärerna flyttar sig.
         public static void WipeDrawing(string[,] drawingCreated)
         {
             for (int row = 0; row < drawingCreated.GetLength(0); row++)
@@ -53,9 +53,9 @@
 
 
 
-        
 
-        public static string[,] RedrawDrawing(string[,] drawingImport)  // den uppdaterade teckningen
+
+        public static string[,] RedrawDrawing(string[,] drawingImport, string meeting)  // den uppdaterade teckningen
         {
             Console.Clear();
 
@@ -68,6 +68,47 @@
                 }
                 Console.WriteLine();
 
+            }
+
+            if (!string.IsNullOrEmpty(meeting))
+            {
+                Console.WriteLine("\n--- Meetings this turn ---");
+
+                bool hasThief = meeting.Contains("T");
+                bool hasPolice = meeting.Contains("P");
+                bool hasCivilian = meeting.Contains("C");
+
+                // Thief and Police meet (any number)
+                if (hasThief && hasPolice && !hasCivilian)
+                {
+                    Console.WriteLine("Thief(s) met Police! Stand down!.");
+                }
+
+                // Civilian and Thief meet
+                if (hasCivilian && hasThief && !hasPolice)
+                {
+                    Console.WriteLine("Civilian(s) met Thief(s)! Uh oh!");
+                }
+
+                // Civilian and Police meet
+                if (hasCivilian && hasPolice && !hasThief)
+                {
+                    Console.WriteLine("Civilian(s) met Police! Hopefully just a friendly chat.");
+                }
+
+                // All three meet
+                if (hasCivilian && hasPolice && hasThief)
+                {
+                    Console.WriteLine("All three groups met! Chaos or justice?");
+                }
+
+                // Just one type
+                if ((hasCivilian && !hasPolice && !hasThief) ||
+                    (hasPolice && !hasCivilian && !hasThief) ||
+                    (hasThief && !hasCivilian && !hasPolice))
+                {
+                    Console.WriteLine("Just a group of same-type people hanging out.");
+                }
             }
 
             return drawingImport; //skicka tillbaka färdig ritning

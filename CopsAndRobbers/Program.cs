@@ -12,6 +12,9 @@
             {
                 new Civilian(5, 5),
                 new Thief(5, 5),
+                new Police(5, 5),
+                new Civilian(5, 5),
+                new Thief(5, 5),
                 new Police(5, 5)
             };
 

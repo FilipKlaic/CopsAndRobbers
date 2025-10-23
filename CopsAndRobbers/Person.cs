@@ -5,6 +5,7 @@
         public int X { get; set; }
         public int Y { get; set; }
         public string Character { get; set; }
+        public string Name { get; set; }
         public ConsoleColor Charactercolor { get; set; }
 
         public Person() { }
@@ -29,12 +30,14 @@
         public Thief(int randomX, int randomY) : base(randomX, randomY)
         {
             Character = "T";
+            Name = "Thief";
             Charactercolor = ConsoleColor.Red;
         }
 
         public Thief()
         {
             Character = "T";
+            Name = "Thief";
             Charactercolor = ConsoleColor.Red;
         }
     }
@@ -44,12 +47,15 @@
         public Police(int randomX, int randomY) : base(randomX, randomY)
         {
             Character = "P";
+            Name = "Police";
             Charactercolor = ConsoleColor.Blue;
         }
 
         public Police()
         {
             Character = "P";
+            Name = "Police";
+
             Charactercolor = ConsoleColor.Blue;
         }
     }
@@ -59,12 +65,16 @@
         public Civilian(int randomX, int randomY) : base(randomX, randomY)
         {
             Character = "C";
+            Name = "Civilian";
+
             Charactercolor = ConsoleColor.Green;
         }
 
         public Civilian()
         {
             Character = "C";
+            Name = "Civilian";
+
             Charactercolor = ConsoleColor.Green;
         }
     }

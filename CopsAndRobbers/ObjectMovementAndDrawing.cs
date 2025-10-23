@@ -40,6 +40,8 @@
             //kan beskrivas som bowling mellan varje plan rensing
             Rita.WipeDrawing(drawing);
 
+            string meeting = ""; // skriver ut denna för att säga vem som träffar vem
+
             // Draw characters onto the grid based on position tracker   move thorugh "array of lists"
             for (int row = 0; row < positions.GetLength(0); row++)
             {
@@ -56,21 +58,23 @@
                         {
                             drawing[row, col] = positions[row, col].Count.ToString();
 
-                            Console.ReadKey();
 
-                            
+
                             //ärva saker     tittar vilka karaktärer som möts.
                             // skriva ut träffen.
                             // ta bort karaktärer (fängelset)
 
 
+                            for (int i = 0; i < positions[row, col].Count; i++)
+                            {
+                                meeting += positions[row, col][i].Character;
+                            }
                         }
                     }
                 }
             }
 
-            Rita.RedrawDrawing(drawing);
-            Console.WriteLine("BANAN");
+            Rita.RedrawDrawing(drawing, meeting);
         }
     }
 }
