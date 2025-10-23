@@ -56,12 +56,13 @@
                         {
                             drawing[row, col] = positions[row, col].Count.ToString();
 
-                            
+                            Console.ReadKey();
+
                             
                             //ärva saker     tittar vilka karaktärer som möts.
                             // skriva ut träffen.
                             // ta bort karaktärer (fängelset)
-                            
+
 
                         }
                     }
@@ -69,7 +70,7 @@
             }
 
             Rita.RedrawDrawing(drawing);
-            
+            Console.WriteLine("BANAN");
         }
     }
 }
