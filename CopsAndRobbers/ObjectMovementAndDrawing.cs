@@ -40,41 +40,37 @@
             //kan beskrivas som bowling mellan varje plan rensing
             Rita.WipeDrawing(drawing);
 
-            string meeting = ""; // skriver ut denna för att säga vem som träffar vem
 
+            List<Person> populatedIndex = new();
             // Draw characters onto the grid based on position tracker   move thorugh "array of lists"
             for (int row = 0; row < positions.GetLength(0); row++)
             {
                 for (int col = 0; col < positions.GetLength(1); col++)
                 {
-                    // Check if any characters are at this position   count = person
-                    if (positions[row, col].Count > 0)
-                    {
-                        if (positions[row, col].Count == 1)
-                        {
-                            drawing[row, col] = positions[row, col][0].Character;  //0 är personen i listan. det ända objected i listan.
-                        }
-                        else
-                        {
-                            drawing[row, col] = positions[row, col].Count.ToString();
 
+                    if (positions[row, col].Count > 0)  // Check if any characters are at this position   count = person
+                    {
+                        if (positions[row, col].Count == 1) //rita en person
+                        {
+                            drawing[row, col] = positions[row, col][0].Character;
+                        }
+                        else //rita flera
+                        {
+                            drawing[row, col] = positions[row, col].Count.ToString(); // if count = 2.     drawing row col = "2"
+
+                            //sparade indexet i en ny lista för att behålla exakta personerna
+                            populatedIndex = positions[row, col];
 
 
                             //ärva saker     tittar vilka karaktärer som möts.
                             // skriva ut träffen.
                             // ta bort karaktärer (fängelset)
-
-
-                            for (int i = 0; i < positions[row, col].Count; i++)
-                            {
-                                meeting += positions[row, col][i].Character;
-                            }
                         }
                     }
                 }
             }
-
-            Rita.RedrawDrawing(drawing, meeting);
+            // sätta collision detection method :)!
+            Rita.RedrawDrawing(drawing, populatedIndex);
         }
     }
 }

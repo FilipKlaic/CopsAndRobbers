@@ -10,6 +10,14 @@
 
         public Person() { }
 
+        public static string GetRandomLastName()
+        {
+            Random rnd = new Random();
+            int index = rnd.Next(Names.LastNames.Length);
+            return Names.LastNames[index];
+
+        }
+
         public Person(int x, int y)
         {
             X = x;
@@ -30,7 +38,7 @@
         public Thief(int randomX, int randomY) : base(randomX, randomY)
         {
             Character = "T";
-            Name = "Thief";
+            Name = "Thief " + GetRandomLastName();
             Charactercolor = ConsoleColor.Red;
         }
     }
@@ -40,10 +48,9 @@
         public Police(int randomX, int randomY) : base(randomX, randomY)
         {
             Character = "P";
-            Name = "Police";
+            Name = "Police " + GetRandomLastName();
             Charactercolor = ConsoleColor.Blue;
         }
-
     }
 
     class Civilian : Person
@@ -51,9 +58,30 @@
         public Civilian(int randomX, int randomY) : base(randomX, randomY)
         {
             Character = "C";
-            Name = "Civilian";
-
+            Name = "Civilian " + GetRandomLastName(); ;
             Charactercolor = ConsoleColor.Green;
         }
+    }
+
+    static class Names
+    {
+        public static string[] LastNames = new string[]
+        {
+            "Baggins",
+            "Stark",
+            "Lupin",
+            "Robin",
+            "Fox",
+            "Carter",
+            "Vimes",
+            "Montoya",
+            "Marple",
+            "Bonnie",
+            "Clyde",
+            "Archer",
+            "Gambit",
+            "Parker",
+            "Addams"
+        };
     }
 }

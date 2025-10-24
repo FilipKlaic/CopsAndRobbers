@@ -21,7 +21,9 @@
             while (true)
             {
                 ObjectMovementAndDrawing.MovementDrawing(drawing, list, rnd);
+
                 Console.ReadKey();
+
             }
         }
     }
