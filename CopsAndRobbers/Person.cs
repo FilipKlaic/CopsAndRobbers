@@ -12,10 +12,12 @@
 
         public static string GetRandomLastName()
         {
-            Random rnd = new Random();
-            int index = rnd.Next(Names.LastNames.Length);
-            return Names.LastNames[index];
 
+            Random rnd = new Random();
+            int index = rnd.Next(Names.LastNames.Count);
+            string name = Names.LastNames[index];  // store first
+            Names.LastNames.RemoveAt(index);       // then remove it
+            return name;
         }
 
         public Person(int x, int y)
@@ -65,8 +67,7 @@
 
     static class Names
     {
-        public static string[] LastNames = new string[]
-        {
+        public static List<string> LastNames = new List<string>        {
             "Baggins",
             "Stark",
             "Lupin",
