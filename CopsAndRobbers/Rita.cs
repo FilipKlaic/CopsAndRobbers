@@ -55,7 +55,7 @@
 
 
 
-        public static string[,] RedrawDrawing(string[,] drawingImport, List<Person> populatedIndex)  // den uppdaterade teckningen
+        public static string[,] RedrawDrawing(string[,] drawingImport, List<List<Person>> collisions)  // den uppdaterade teckningen
         {
             Console.Clear();
 
@@ -64,59 +64,65 @@
                 for (int col = 0; col < drawingImport.GetLength(1); col++)  //rita upp allt
                 {
                     Console.Write(drawingImport[row, col]); //rita ut den uppdaterade rad för rad , med den nya bokstaven
-
                 }
                 Console.WriteLine();
-
             }
 
-            if (populatedIndex == null || populatedIndex.Count == 0)
+            if (collisions == null || collisions.Count == 0)
                 return drawingImport;
 
-            // Check who is present in this cell
-            bool hasPolice = populatedIndex.Any(p => p is Police);
-            bool hasThief = populatedIndex.Any(t => t is Thief);
-            bool hasCivilian = populatedIndex.Any(c => c is Civilian);
+            foreach (var populatedIndex in collisions)
+            {
+                if (populatedIndex == null || populatedIndex.Count == 0)
+                    continue;
 
-            // Collect names by type (using your preferred variable names)
-            string policeNames = string.Join(", ", populatedIndex.OfType<Police>().Select(p => p.Name));
-            string thiefNames = string.Join(", ", populatedIndex.OfType<Thief>().Select(t => t.Name));
-            string civNames = string.Join(", ", populatedIndex.OfType<Civilian>().Select(c => c.Name));
+                // Check who is present in this cell
+                bool hasPolice = populatedIndex.Any(p => p is Police);          //charachter present     = true / false
+                bool hasThief = populatedIndex.Any(t => t is Thief);
+                bool hasCivilian = populatedIndex.Any(c => c is Civilian);
 
-            // --- Meeting Logic ---
+                // Collect names by type (using your preferred variable names)
+                string policeNames = string.Join(", ", populatedIndex.OfType<Police>().Select(p => p.Name));  //name saved to string
+                string thiefNames = string.Join(", ", populatedIndex.OfType<Thief>().Select(t => t.Name));
+                string civNames = string.Join(", ", populatedIndex.OfType<Civilian>().Select(c => c.Name));
 
-            // Police vs Thief (no Civilians)
-            if (hasPolice && hasThief && !hasCivilian)
-            {
-                Console.WriteLine($"{policeNames} met {thiefNames}! Justice served!");
+                // --- Meeting Logic ---
+                if (hasPolice && hasThief && hasCivilian)
+                {
+                    Console.WriteLine($"{policeNames} , {thiefNames} and {civNames} Chaos is here!");
+                }
+                // Police vs Thief (no Civilians)
+                if (hasPolice && hasThief && !hasCivilian)
+                {
+                    Console.WriteLine($"{policeNames} met {thiefNames}! Justice served!");
+                }
+                // Civilian vs Thief (no Police)
+                else if (!hasPolice && hasCivilian && hasThief)
+                {
+                    Console.WriteLine($"{civNames} met {thiefNames}! Uh oh!");
+                }
+                // Civilian vs Police (no Thief)
+                else if (hasPolice && hasCivilian && !hasThief)
+                {
+                    Console.WriteLine($"{civNames} met {policeNames}! Hopefully just a friendly chat.");
+                }
+                // Thief vs Thief
+                else if (populatedIndex.Count(t => t is Thief) > 1)  // if more than 1 thief is present
+                {
+                    Console.WriteLine($"{thiefNames} met each other — plotting mischief!");
+                }
+                // Police vs Police
+                else if (populatedIndex.Count(p => p is Police) > 1)
+                {
+                    Console.WriteLine($"{policeNames} met each other — team coordination!");
+                }
+                // Civilian vs Civilian
+                else if (populatedIndex.Count(c => c is Civilian) > 1)
+                {
+                    Console.WriteLine($"{civNames} met for a friendly chat.");
+                }
             }
-            // Civilian vs Thief (no Police)
-            else if (!hasPolice && hasCivilian && hasThief)
-            {
-                Console.WriteLine($"{civNames} met {thiefNames}! Uh oh!");
-            }
-            // Civilian vs Police (no Thief)
-            else if (hasPolice && hasCivilian && !hasThief)
-            {
-                Console.WriteLine($"{civNames} met {policeNames}! Hopefully just a friendly chat.");
-            }
-            // Thief vs Thief
-            else if (populatedIndex.Count(t => t is Thief) > 1)
-            {
-                Console.WriteLine($"{thiefNames} met each other — plotting mischief!");
-            }
-            // Police vs Police
-            else if (populatedIndex.Count(p => p is Police) > 1)
-            {
-                Console.WriteLine($"{policeNames} met each other — team coordination!");
-            }
-            // Civilian vs Civilian
-            else if (populatedIndex.Count(c => c is Civilian) > 1)
-            {
-                Console.WriteLine($"{civNames} met for a friendly chat.");
-            }
-
-            return drawingImport; // return updated drawing
+            return drawingImport; // Ensure a return statement for all code paths
         }
     }
 }

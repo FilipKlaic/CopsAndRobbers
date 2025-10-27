@@ -41,7 +41,8 @@
             Rita.WipeDrawing(drawing);
 
 
-            List<Person> populatedIndex = new();
+            //collsion metoden kikar ifall flera personer är på samma plats
+            var collisions = new List<List<Person>>();
             // Draw characters onto the grid based on position tracker   move thorugh "array of lists"
             for (int row = 0; row < positions.GetLength(0); row++)
             {
@@ -59,18 +60,13 @@
                             drawing[row, col] = positions[row, col].Count.ToString(); // if count = 2.     drawing row col = "2"
 
                             //sparade indexet i en ny lista för att behålla exakta personerna
-                            populatedIndex = positions[row, col];
+                            collisions.Add(new List<Person>(positions[row, col]));
 
-
-                            //ärva saker     tittar vilka karaktärer som möts.
-                            // skriva ut träffen.
-                            // ta bort karaktärer (fängelset)
                         }
                     }
                 }
             }
-            // sätta collision detection method :)!
-            Rita.RedrawDrawing(drawing, populatedIndex);
+            Rita.RedrawDrawing(drawing, collisions);
         }
     }
 }
