@@ -68,11 +68,14 @@
                 Console.WriteLine();
             }
 
+            //check for collsions again
             if (collisions == null || collisions.Count == 0)
                 return drawingImport;
 
-            foreach (var populatedIndex in collisions)
+            foreach (var populatedIndex in collisions)    //kikar om det finns flera platser som det krockas på
             {
+
+                //failsafe
                 if (populatedIndex == null || populatedIndex.Count == 0)
                     continue;
 
@@ -86,36 +89,54 @@
                 string thiefNames = string.Join(", ", populatedIndex.OfType<Thief>().Select(t => t.Name));
                 string civNames = string.Join(", ", populatedIndex.OfType<Civilian>().Select(c => c.Name));
 
+
                 // --- Meeting Logic ---
                 if (hasPolice && hasThief && hasCivilian)
                 {
+
                     Console.WriteLine($"{policeNames} , {thiefNames} and {civNames} Chaos is here!");
+
                 }
-                // Police vs Thief (no Civilians)
-                if (hasPolice && hasThief && !hasCivilian)
+
+                // Police vs Thief 
+                if (hasPolice && hasThief)
                 {
                     Console.WriteLine($"{policeNames} met {thiefNames}! Justice served!");
+
+
+                    var caughtThieves = populatedIndex.OfType<Thief>().ToList();       // denna för att lägga ihop dom i samma string
+                    foreach (var thief in caughtThieves)
+                    {
+                        Console.WriteLine($"{thief.Name} has been arrested and removed from the game!");
+
+                    }
+
                 }
-                // Civilian vs Thief (no Police)
-                else if (!hasPolice && hasCivilian && hasThief)
+
+                // Civilian vs Thief
+                else if (hasCivilian && hasThief)
                 {
                     Console.WriteLine($"{civNames} met {thiefNames}! Uh oh!");
                 }
+
                 // Civilian vs Police (no Thief)
-                else if (hasPolice && hasCivilian && !hasThief)
+                else if (hasPolice && hasCivilian)
                 {
                     Console.WriteLine($"{civNames} met {policeNames}! Hopefully just a friendly chat.");
                 }
+
                 // Thief vs Thief
                 else if (populatedIndex.Count(t => t is Thief) > 1)  // if more than 1 thief is present
                 {
                     Console.WriteLine($"{thiefNames} met each other — plotting mischief!");
                 }
+
                 // Police vs Police
                 else if (populatedIndex.Count(p => p is Police) > 1)
                 {
                     Console.WriteLine($"{policeNames} met each other — team coordination!");
                 }
+
                 // Civilian vs Civilian
                 else if (populatedIndex.Count(c => c is Civilian) > 1)
                 {

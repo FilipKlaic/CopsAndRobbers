@@ -42,7 +42,7 @@
 
 
             //collsion metoden kikar ifall flera personer är på samma plats
-            var collisions = new List<List<Person>>();
+            var collisions = new List<List<Person>>(); //list of lists
             // Draw characters onto the grid based on position tracker   move thorugh "array of lists"
             for (int row = 0; row < positions.GetLength(0); row++)
             {
@@ -66,7 +66,9 @@
                     }
                 }
             }
+
             Rita.RedrawDrawing(drawing, collisions);
+
         }
     }
 }

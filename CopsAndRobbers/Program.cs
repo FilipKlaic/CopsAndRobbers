@@ -2,11 +2,15 @@
 {
     internal class Program
     {
+
+
+
         static void Main(string[] args)
         {
             string[,] drawing = Rita.DrawingClassInitilize();
 
             Random rnd = new Random();
+
 
             List<Person> list = new List<Person>
             {
@@ -18,11 +22,16 @@
                 new Police(5, 5)
             };
 
+            List<Thief> JailedThieves = new List<Thief>();
+
+
             while (true)
             {
                 ObjectMovementAndDrawing.MovementDrawing(drawing, list, rnd);
+                JailedThieves.AddRange(Interact.CaughtThieves(caughtThieves));
 
                 Console.ReadKey();
+
 
             }
         }
