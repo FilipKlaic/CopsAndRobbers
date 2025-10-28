@@ -29,10 +29,14 @@
 
         public virtual void Draw()
         {
-            Console.ForegroundColor = Charactercolor;
-            Console.SetCursorPosition(Y, X);
-            Console.Write(Character);
-            Console.ResetColor();
+            // Ensure the cursor position is within console bounds
+            if (Y >= 0 && Y < Console.WindowWidth && X >= 0 && X < Console.WindowHeight)
+            {
+                Console.ForegroundColor = Charactercolor;
+                Console.SetCursorPosition(Y, X);  // Note: SetCursorPosition takes (column, row) = (Y, X)
+                Console.Write(Character);
+                Console.ResetColor();
+            }
         }
 
         public void ShowPersonsInfo()
@@ -54,11 +58,33 @@
             Charactercolor = ConsoleColor.Red;
         }
 
-        //public Thief()
-        //{
-        //    Character = "T";
-        //    Charactercolor = ConsoleColor.Red;
-        //}
+        public bool StealFrom(Civilian civilian, Random rnd)
+        {
+            if (civilian.Inventory.Items.Count == 0)
+            {
+                Console.WriteLine($"{Name} tried to steal from {civilian.Name}, but they have nothing to steal!");
+                return false;
+            }
+
+            // Add a success rate (e.g., 70% chance)
+            if (rnd.Next(100) < 70)
+            {
+                int randomIndex = rnd.Next(civilian.Inventory.Items.Count);
+                string stolenItem = civilian.Inventory.Items[randomIndex];
+                
+                civilian.Inventory.RemoveItem(stolenItem);
+                this.Inventory.AddItem(stolenItem);
+                
+                Console.WriteLine($"{Name} successfully stole {stolenItem} from {civilian.Name}!");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"{Name} tried to steal from {civilian.Name} but failed!");
+                return false;
+            }
+        }
+
     }
 
     class Police : Person
