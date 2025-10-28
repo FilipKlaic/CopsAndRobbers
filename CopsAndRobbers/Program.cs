@@ -6,13 +6,6 @@
         {
             Random rnd = new Random();
 
-            //List<Person> list = new List<Person>
-            //     {
-            //    new Civilian(5, 5),
-            //    new Thief(5, 5),
-            //    new Police(5, 5)
-            //};
-
             // Create characters without coordinates
             List<Person> characters = new List<Person>
     {
@@ -47,16 +40,7 @@
 
 
             city.DrawingClass(canvas, 0, 0);                       // draw the City 
-            prison.DrawingClass(canvas, city.Height + 1, 0);      // draw Prison with a 1-line gap
-
-            //// Draw characters onto the canvas 
-            //foreach (var p in characters)
-            //{
-            //    // Ensure coordinates are within the canvas
-            //    if (p.X >= 0 && p.X < totalHeight && p.Y >= 0 && p.Y < totalWidth)
-            //        canvas[p.X, p.Y] = p.Character[0];
-            //}
-
+            prison.DrawingClass(canvas, city.Height + 0, 0);      // draw Prison with a 1-line gap
 
             Console.WriteLine();
 
