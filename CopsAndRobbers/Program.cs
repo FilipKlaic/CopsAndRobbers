@@ -27,6 +27,7 @@
 
             while (true)
             {
+
                 var collisions = ObjectMovementAndDrawing.MovementDrawing(drawing, list, rnd);
 
 
@@ -36,10 +37,12 @@
                 foreach (var thief in caughtThisTurn)
                 {
                     list.Remove(thief);
-                    Console.WriteLine($"{thief.Name} has been jailed!");
+                    Console.WriteLine($"{thief.Name} has been sent to Gulag!");
+                    Thread.Sleep(5000);
+
                 }
 
-                Console.ReadKey();
+                Thread.Sleep(400);
 
 
             }
