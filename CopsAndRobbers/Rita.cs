@@ -101,13 +101,12 @@
                 // Police vs Thief 
                 if (hasPolice && hasThief)
                 {
-                    Console.WriteLine($"{policeNames} met {thiefNames}! Justice served!");
+                    Console.WriteLine($"{policeNames} met {thiefNames}!");
 
 
                     var caughtThieves = populatedIndex.OfType<Thief>().ToList();       // denna för att lägga ihop dom i samma string
                     foreach (var thief in caughtThieves)
                     {
-                        Console.WriteLine($"{thief.Name} has been arrested and removed from the game!");
 
                     }
 
