@@ -27,8 +27,17 @@
 
             while (true)
             {
-                ObjectMovementAndDrawing.MovementDrawing(drawing, list, rnd);
-                JailedThieves.AddRange(Interact.CaughtThieves(caughtThieves));
+                var collisions = ObjectMovementAndDrawing.MovementDrawing(drawing, list, rnd);
+
+
+                var caughtThisTurn = Interact.CaughtThieves(collisions); //list of caughtThiefsThisTURN
+                JailedThieves.AddRange(caughtThisTurn);
+
+                foreach (var thief in caughtThisTurn)
+                {
+                    list.Remove(thief);
+                    Console.WriteLine($"{thief.Name} has been jailed!");
+                }
 
                 Console.ReadKey();
 

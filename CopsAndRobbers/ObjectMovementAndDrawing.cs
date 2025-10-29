@@ -2,7 +2,7 @@
 {
     internal class ObjectMovementAndDrawing
     {
-        public static void MovementDrawing(string[,] drawing, List<Person> list, Random rnd)
+        public static List<List<Person>> MovementDrawing(string[,] drawing, List<Person> list, Random rnd)
         {
             //Creates a new list for each square on the drawing to be able to display and hold multiple chcarachters without overwriting eachother
             List<Person>[,] positions = new List<Person>[drawing.GetLength(0), drawing.GetLength(1)];
@@ -68,7 +68,7 @@
             }
 
             Rita.RedrawDrawing(drawing, collisions);
-
+            return collisions;
         }
     }
 }

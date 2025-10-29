@@ -11,6 +11,9 @@
             foreach (var populatedIndex in collisions)
             {
                 bool hasPolice = populatedIndex.Any(p => p is Police); //checks if the cop is in the same index
+
+                //add if thief has something in pocket
+
                 if (!hasPolice) continue;
 
 
