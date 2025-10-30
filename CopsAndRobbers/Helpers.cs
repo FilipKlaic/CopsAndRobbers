@@ -3,49 +3,100 @@
     internal class Helpers
     {
 
-        public static string[,] DrawingClass()
+        // Function to move all characters randomly
+     internal static void MoveCharactersRandomly(List<Person> characters, City city, Prison prison, char[,] canvas)
         {
-            string[,] drawingCreated = new string[10, 15];
+            Random rnd = new Random();
 
-            for (int row = 0; row < drawingCreated.GetLength(0); row++)
+            // Total canvas offsets: city is drawn at startRow=0,startCol=0; prison at startRow = city.Height + 0
+            int cityStartRow = 0;
+            int cityStartCol = 0;
+            int prisonStartRow = city.Height + 0;
+            int prisonStartCol = 0;
+
+            // Calculate safe area inside city (avoid title row and borders)
+            int safeTop = cityStartRow + 2;             // skip title line and top border
+            int safeBottom = cityStartRow + city.Height - 2; // skip bottom border
+            int safeLeft = cityStartCol + 1;            // skip left border
+            int safeRight = cityStartCol + city.Width - 2; // skip right border
+
+            // Store previous positions so we can restore underlying canvas chars
+            var previousPositions = new Dictionary<Person, (int X, int Y)>();
+            foreach (var p in characters)
+                previousPositions[p] = (p.X, p.Y);
+
+            // Draw initial characters (on top of already drawn canvas)
+            foreach (var p in characters)
             {
-                for (int col = 0; col < drawingCreated.GetLength(1); col++)
+                if (p.X >= safeTop && p.X <= safeBottom && p.Y >= safeLeft && p.Y <= safeRight)
                 {
-                    if (row == 0 || row == drawingCreated.GetLength(0) - 1 || //top,mid,bot
-                        col == 0 || col == drawingCreated.GetLength(1) - 1)
-                    {
-                        drawingCreated[row, col] = "#";
-
-                    }
-                    else
-                    {
-                        drawingCreated[row, col] = " ";
-                    }
-
-                    Console.Write(drawingCreated[row, col]);
+                    Console.SetCursorPosition(p.Y, p.X);
+                    Console.ForegroundColor = p.Charactercolor;
+                    Console.Write(p.Character);
+                    Console.ResetColor();
                 }
-                Console.WriteLine();
-
-            }
-            return drawingCreated;
-        }
-
-        public static string[,] UpdateDrawing(string[,] drawingImport)  // den uppdaterade teckningen
-        {
-            Console.Clear();
-
-            for (int row = 0; row < drawingImport.GetLength(0); row++)
-            {
-                for (int col = 0; col < drawingImport.GetLength(1); col++)  //rita upp allt
-                {
-                    Console.Write(drawingImport[row, col]); //rita ut den uppdaterade rad för rad , med den nya bokstaven
-
-                }
-                Console.WriteLine();
-
             }
 
-            return drawingImport; //skicka tillbaka färdig ritning
+            // Main loop
+            while (true)
+            {
+                foreach (var p in characters)
+                {
+                    // restore underlying symbol at previous position from canvas (avoid erasing frame)
+                    var prev = previousPositions[p];
+                    if (prev.X >= 0 && prev.X < canvas.GetLength(0) && prev.Y >= 0 && prev.Y < canvas.GetLength(1))
+                    {
+                        // restore the canvas char (this will put '=' or 'X' or ' ' back)
+                        Console.SetCursorPosition(prev.Y, prev.X);
+                        Console.Write(canvas[prev.X, prev.Y]);
+                    }
+
+                    // choose random step (-1, 0, 1 each)
+                    int dx = rnd.Next(-1, 2);
+                    int dy = rnd.Next(-1, 2);
+
+                    int candidateX = p.X + dx;
+                    int candidateY = p.Y + dy;
+
+                    // clamp to safe area (so characters never go on borders)
+                    candidateX = Math.Max(safeTop, Math.Min(candidateX, safeBottom));
+                    candidateY = Math.Max(safeLeft, Math.Min(candidateY, safeRight));
+
+                    // update model position
+                    p.X = candidateX;
+                    p.Y = candidateY;
+
+                    // draw character in new position (color)
+                    Console.SetCursorPosition(p.Y, p.X);
+                    Console.ForegroundColor = p.Charactercolor;
+                    Console.Write(p.Character);
+                    Console.ResetColor();
+
+                    // save previous position for next loop
+                    previousPositions[p] = (p.X, p.Y);
+                }
+
+                // show logs below the field
+                int logStartRow = city.Height + prison.Height + 2;
+                Console.SetCursorPosition(0, logStartRow);
+
+                // Clear previous logs
+                for (int i = 0; i < characters.Count + 1; i++)
+                {
+                    Console.SetCursorPosition(0, logStartRow + i);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                }
+
+                Console.SetCursorPosition(0, logStartRow);
+                Console.WriteLine("Characters and their positions:");
+                foreach (var p in characters)
+                {
+                    p.ShowPersonsInfo();
+                }
+
+                // small pause so we can see movement
+                Thread.Sleep(700);
+            }
+            }
         }
-    }
 }

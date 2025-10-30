@@ -59,7 +59,9 @@
                 }
             }
 
-            MoveCharactersRandomly(characters, city, prison, canvas);
+            Helpers.MoveCharactersRandomly(characters, city, prison, canvas);
+
+            //MoveCharactersRandomly(characters, city, prison, canvas);
 
 
         }
