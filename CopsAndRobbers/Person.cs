@@ -95,11 +95,7 @@
             Charactercolor = ConsoleColor.Blue;
         }
 
-        //public Police()
-        //{
-        //    Character = "P";
-        //    Charactercolor = ConsoleColor.Blue;
-        //}
+    
     }
 
     class Civilian : Person
@@ -111,11 +107,5 @@
             Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
         }
 
-        //public Civilian()
-        //{
-        //    Character = "C";
-        //    Charactercolor = ConsoleColor.Green;
-        //    Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
-        //}
     }
 }
