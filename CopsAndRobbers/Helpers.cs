@@ -87,16 +87,87 @@
                     Console.Write(new string(' ', Console.WindowWidth));
                 }
 
-                Console.SetCursorPosition(0, logStartRow);
-                Console.WriteLine("Characters and their positions:");
-                foreach (var p in characters)
-                {
-                    p.ShowPersonsInfo();
-                }
+                HandleCollisions(characters, city, prison, rnd);
+
+                //Console.SetCursorPosition(0, logStartRow);
+                //Console.WriteLine("Characters and their positions:");
+                //foreach (var p in characters)
+                //{
+                //    p.ShowPersonsInfo();
+                //}
 
                 // small pause so we can see movement
-                Thread.Sleep(700);
+                Thread.Sleep(400);
             }
+            }
+
+        public static void HandleCollisions(List<Person> characters, City city, Prison prison, Random rnd)
+        {
+            int startLogRow = city.Height + prison.Height + 2;
+            // Iterate through all pairs of characters
+            for (int i = 0; i < characters.Count; i++)
+            {
+                for (int j = i + 1; j < characters.Count; j++)
+                {
+                    var p1 = characters[i];
+                    var p2 = characters[j];
+
+                    // Skip if characters are not on the same position
+                    if (p1.X != p2.X || p1.Y != p2.Y)
+                        continue;
+
+                    if ((p1.RoleName == "Thief" && p2.RoleName == "Civilian") ||
+                        (p1.RoleName == "Civilian" && p2.RoleName == "Thief"))
+                    {
+                        var thief = p1.RoleName == "Thief" ? p1 as Thief : p2 as Thief;
+                        var civilian = p1.RoleName == "Civilian" ? p1 as Civilian : p2 as Civilian;
+
+                        thief?.StealFrom(civilian, rnd);
+                        //Console.SetCursorPosition(0, startLogRow);
+                        //Console.WriteLine("Thief meets Civilian");
+                        Thread.Sleep(1000);
+                    }
+                
+                    else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
+                             (p1.RoleName == "Police officer" && p2.RoleName == "Thief"))
+                    {
+                        // Something happens
+                        Console.SetCursorPosition(0, startLogRow);
+                        Console.WriteLine("Thief meets Police");
+                        Thread.Sleep(1000);
+                    }
+                    // Civilian meets Civilian
+                    else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
+                    {
+                        // Nothing happens
+                        Console.SetCursorPosition(0, startLogRow);
+                        Console.WriteLine("Civilian meets Civilian");
+                        Thread.Sleep(1000);
+                    }
+                  
+                    else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
+                             (p1.RoleName == "Civilian" && p2.RoleName == "Police officer"))
+                    {
+                        // Something happens
+                        Console.SetCursorPosition(0, startLogRow);
+                        Console.WriteLine("Police meets Civilian");
+                        Thread.Sleep(1000);
+                    }
+                    
+                    else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
+                    {
+                        // Nothing happens
+                        Console.SetCursorPosition(0, startLogRow);
+                        Console.WriteLine("Police meets Police");
+                        Thread.Sleep(1000);
+                    }
+                   
+                    else
+                    {
+                        // Could log or ignore
+                    }
+                }
             }
         }
+    }
 }
