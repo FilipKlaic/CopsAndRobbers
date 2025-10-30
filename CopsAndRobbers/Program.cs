@@ -47,6 +47,8 @@
             // Draw everything on the console
             Place.UpdateDrawing(canvas);
 
+            //MoveCharactersRandomly(characters, city);
+
             // Draw characters with color on top of the field
             foreach (var p in characters)
             {
@@ -58,109 +60,120 @@
             }
 
 
-            // Leave one empty line after field
-            Console.SetCursorPosition(0, city.Height + prison.Height + 2);
+            //// Leave one empty line after field
+            //Console.SetCursorPosition(0, city.Height + prison.Height + 2);
 
-            // Print all characters info to console
-            Console.WriteLine("Characters and their inventories:");
+            //// Print all characters info to console
+            //Console.WriteLine("Characters and their inventories:");
+            //foreach (var p in characters)
+            //{
+            //    //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y}) ; Inventory: {string.Join(", ", p.Inventory.Items)}");
+
+            //    //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y})");
+            //    p.ShowPersonsInfo();  // Display inventory
+            //}
+
+            //Console.WriteLine("\nPress any key to start simulation...");
+            //Console.ReadKey();
+            MoveCharactersRandomly(characters, city, prison, canvas);
+
+
+        }
+
+        // === Function to move all characters randomly ===
+        static void MoveCharactersRandomly(List<Person> characters, City city, Prison prison, char[,] canvas)
+        {
+            Random rnd = new Random();
+
+            // Total canvas offsets: city is drawn at startRow=0,startCol=0; prison at startRow = city.Height + 0
+            int cityStartRow = 0;
+            int cityStartCol = 0;
+            int prisonStartRow = city.Height + 0;
+            int prisonStartCol = 0;
+
+            // Calculate safe area inside city (avoid title row and borders)
+            int safeTop = cityStartRow + 2;             // skip title line and top border
+            int safeBottom = cityStartRow + city.Height - 2; // skip bottom border
+            int safeLeft = cityStartCol + 1;            // skip left border
+            int safeRight = cityStartCol + city.Width - 2; // skip right border
+
+            // Store previous positions so we can restore underlying canvas chars
+            var previousPositions = new Dictionary<Person, (int X, int Y)>();
+            foreach (var p in characters)
+                previousPositions[p] = (p.X, p.Y);
+
+            // Draw initial characters (on top of already drawn canvas)
             foreach (var p in characters)
             {
-                //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y}) ; Inventory: {string.Join(", ", p.Inventory.Items)}");
-
-                //Console.WriteLine($"{p.Character} at ({p.X}, {p.Y})");
-                p.ShowPersonsInfo();  // Display inventory
+                if (p.X >= safeTop && p.X <= safeBottom && p.Y >= safeLeft && p.Y <= safeRight)
+                {
+                    Console.SetCursorPosition(p.Y, p.X);
+                    Console.ForegroundColor = p.Charactercolor;
+                    Console.Write(p.Character);
+                    Console.ResetColor();
+                }
             }
 
-            // Pause to keep console open
-            Console.WriteLine("\nPress any key to exit...");
-            Console.ReadKey();
-        
+            // Main loop
+            while (true)
+            {
+                foreach (var p in characters)
+                {
+                    // restore underlying symbol at previous position from canvas (avoid erasing frame)
+                    var prev = previousPositions[p];
+                    if (prev.X >= 0 && prev.X < canvas.GetLength(0) && prev.Y >= 0 && prev.Y < canvas.GetLength(1))
+                    {
+                        // restore the canvas char (this will put '=' or 'X' or ' ' back)
+                        Console.SetCursorPosition(prev.Y, prev.X);
+                        Console.Write(canvas[prev.X, prev.Y]);
+                    }
 
+                    // choose random step (-1, 0, 1 each)
+                    int dx = rnd.Next(-1, 2);
+                    int dy = rnd.Next(-1, 2);
 
+                    int candidateX = p.X + dx;
+                    int candidateY = p.Y + dy;
 
+                    // clamp to safe area (so characters never go on borders)
+                    candidateX = Math.Max(safeTop, Math.Min(candidateX, safeBottom));
+                    candidateY = Math.Max(safeLeft, Math.Min(candidateY, safeRight));
 
-        //        while (true)
-        //        {
-        //            // Create a 2D array of lists to track which characters are at each grid position
-        //            // This allows multiple characters to occupy the same cell
-        //            List<Person>[,] positions = new List<Person>[drawing.GetLength(0), drawing.GetLength(1)];
+                    // update model position
+                    p.X = candidateX;
+                    p.Y = candidateY;
 
-        //            // Initialize every cell with an empty list
-        //            for (int i = 0; i < positions.GetLength(0); i++)
-        //            {
-        //                for (int j = 0; j < positions.GetLength(1); j++)
-        //                {
-        //                    positions[i, j] = new List<Person>();
-        //                }
-        //            }
+                    // draw character in new position (color)
+                    Console.SetCursorPosition(p.Y, p.X);
+                    Console.ForegroundColor = p.Charactercolor;
+                    Console.Write(p.Character);
+                    Console.ResetColor();
 
-        //            // Move each character randomly
-        //            foreach (var p in list)
-        //            {
-        //                // Generate random movement: -1, 0, or 1 for both X and Y
-        //                int dx = rnd.Next(-1, 2); // horizontal movement
-        //                int dy = rnd.Next(-1, 2); // vertical movement
+                    // save previous position for next loop
+                    previousPositions[p] = (p.X, p.Y);
+                }
 
-        //                // Calculate new position and clamp to stay inside borders
-        //                // Math.Clamp prevents moving into border (row/col 0 or last row/col)
-        //                int newX = Math.Clamp(p.X + dx, 1, drawing.GetLength(0) - 2);
-        //                int newY = Math.Clamp(p.Y + dy, 1, drawing.GetLength(1) - 2);
+                // show logs below the field
+                int logStartRow = city.Height + prison.Height + 2;
+                Console.SetCursorPosition(0, logStartRow);
 
-        //                // Update character's position (overlapping is allowed)
-        //                p.X = newX;
-        //                p.Y = newY;
+                // Clear previous logs
+                for (int i = 0; i < characters.Count + 1; i++)
+                {
+                    Console.SetCursorPosition(0, logStartRow + i);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                }
 
-        //                // Add this character to the position tracker at their new location
-        //                positions[p.X, p.Y].Add(p);
-        //            }
+                Console.SetCursorPosition(0, logStartRow);
+                Console.WriteLine("Characters and their positions:");
+                foreach (var p in characters)
+                {
+                    p.ShowPersonsInfo();
+                }
 
-        //            // Reset the entire grid to borders (#) and empty spaces ( )
-        //            for (int row = 0; row < drawing.GetLength(0); row++)
-        //            {
-        //                for (int col = 0; col < drawing.GetLength(1); col++)
-        //                {
-        //                    // Check if current cell is on the border (top, bottom, left, or right edge)
-        //                    if (row == 0 || row == drawing.GetLength(0) - 1 ||
-        //                        col == 0 || col == drawing.GetLength(1) - 1)
-        //                    {
-        //                        drawing[row, col] = "#"; // Border
-        //                    }
-        //                    else
-        //                    {
-        //                        drawing[row, col] = " "; // Empty interior space
-        //                    }
-        //                }
-        //            }
-
-        //            // Draw characters onto the grid based on position tracker
-        //            for (int row = 0; row < positions.GetLength(0); row++)
-        //            {
-        //                for (int col = 0; col < positions.GetLength(1); col++)
-        //                {
-        //                    // Check if any characters are at this position
-        //                    if (positions[row, col].Count > 0)
-        //                    {
-        //                        if (positions[row, col].Count == 1)
-        //                        {
-        //                            // Only one character here: show their letter (C, T, or P)
-        //                            drawing[row, col] = positions[row, col][0].Character;
-        //                        }
-        //                        else
-        //                        {
-        //                            // Multiple characters here: show the count as a number (2, 3, etc.)
-        //                            drawing[row, col] = positions[row, col].Count.ToString();
-        //                        }
-        //                    }
-        //                    // If Count is 0, the cell remains empty (" ") from the reset step
-        //                }
-        //            }
-
-        //            // Clear the console and display the updated grid
-        //            Helpers.UpdateDrawing(drawing);
-
-        //            // Wait for user to press any key before next frame (manual step-through)
-        //            Console.ReadKey();
-        //        }
-    }
+                // small pause so we can see movement
+                Thread.Sleep(700);
+            }
+        }
 }
 }
