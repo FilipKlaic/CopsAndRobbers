@@ -8,7 +8,7 @@ namespace CopsAndRobbers
 {
     class Prison : Place
     {
-        public Prison() : base("PRISON", 20, 10)
+        public Prison() : base("PRISON", 20, 8)  // Reduced from 20x10 to 20x8
         {
         }
 

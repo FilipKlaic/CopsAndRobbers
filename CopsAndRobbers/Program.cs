@@ -4,21 +4,34 @@
     {
         static void Main(string[] args)
         {
-            Random rnd = new Random();
+            // Set console window size to accommodate the game
+            try
+            {
+                Console.SetWindowSize(120, 50);  // width, height
+                Console.SetBufferSize(120, 50);
+            }
+            catch (Exception)
+            {
+                // If we can't resize, continue with current size
+                Console.WriteLine("Could not resize console window. Game may not display properly.");
+                Console.WriteLine("Please maximize your console window.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
 
             // Create characters without coordinates
             List<Person> characters = new List<Person>
-    {
-        new Civilian(0,0,"Jonsson"),
-        new Civilian(0,0,"Svensson"),
-        new Civilian(0,0,"Olofsson"),
-        new Thief(0,0,"Silverstedt"),
-        new Thief(0,0,"Brorson"),
-        new Thief(0,0,"Olsson"),
-        new Police(0,0,"Johansson"),
-        new Police(0,0,"Karlsson"),
-        new Police(0,0,"Nilsson")
-    };
+            {
+                new Civilian(0,0,"Jonsson"),
+                new Civilian(0,0,"Svensson"),
+                new Civilian(0,0,"Olofsson"),
+                new Thief(0,0,"Silverstedt"),
+                new Thief(0,0,"Brorson"),
+                new Thief(0,0,"Olsson"),
+                new Police(0,0,"Johansson"),
+                new Police(0,0,"Karlsson"),
+                new Police(0,0,"Nilsson")
+            };
 
             // Create two new objects: City and Prison
             City city = new City();
@@ -35,9 +48,19 @@
             int totalHeight = city.Height + prison.Height + 1;   // calculate total screen size
             int totalWidth = Math.Max(city.Width, prison.Width); // use the wider place as width
 
+            // Check if the canvas fits in the console
+            if (totalHeight > Console.WindowHeight - 5 || totalWidth > Console.WindowWidth)
+            {
+                Console.WriteLine($"Console window too small! Need at least {totalWidth}x{totalHeight + 5}");
+                Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
+                Console.WriteLine("Please resize your console window and restart the program.");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
+
             // Create a "canvas" (2D array) to draw the places 
             char[,] canvas = new char[totalHeight, totalWidth];
-
 
             city.DrawingClass(canvas, 0, 0);                       // draw the City 
             prison.DrawingClass(canvas, city.Height + 0, 0);      // draw Prison with a 1-line gap

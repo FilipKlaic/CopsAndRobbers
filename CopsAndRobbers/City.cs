@@ -8,7 +8,7 @@ namespace CopsAndRobbers
 {
     class City : Place
     {
-        public City() : base("CITY", 100, 25)
+        public City() : base("CITY", 80, 20)  // Reduced from 100x25 to 80x20
         {
         }
 
