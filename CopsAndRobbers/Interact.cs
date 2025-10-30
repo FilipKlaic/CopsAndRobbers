@@ -2,7 +2,7 @@
 {
     internal class Interact
     {
-        public static void StolenGoods(List<List<Person>> collisions)
+        public static void StolenGoods(List<List<Person>> collisions)      //thief
         {
             foreach (var populatedIndex in collisions)
             {
@@ -27,8 +27,6 @@
                             theif.Inventory.AddItem(item);
                         }
 
-
-
                         // Clear civilians inventory
                         civilian.Inventory.Items.Clear();
                     }
@@ -40,7 +38,7 @@
 
 
 
-        public static List<Thief> CaughtThieves(List<List<Person>> collisions)
+        public static List<Thief> CaughtThieves(List<List<Person>> collisions)  // cop vs thief
         {
 
             List<Thief> caughtThieves = new List<Thief>(); // adds a new list for the caught theives
