@@ -30,7 +30,7 @@
 
                 var collisions = ObjectMovementAndDrawing.MovementDrawing(drawing, list, rnd);
 
-
+                Interact.StolenGoods(collisions);
                 var caughtThisTurn = Interact.CaughtThieves(collisions);
 
 
@@ -41,6 +41,12 @@
                     list.Remove(thief);
                     Console.WriteLine($"{thief.Name} has been sent to Gulag!");
 
+                }
+
+                foreach (Person person in list)
+                {
+                    Console.Write($"{person.Name} ({person.GetType().Name}): ");
+                    person.Inventory.ShowItems();
                 }
 
                 Console.ReadKey();

@@ -7,6 +7,7 @@
         public string Character { get; set; }
         public string Name { get; set; }
         public ConsoleColor Charactercolor { get; set; }
+        public Inventory Inventory { get; set; } = new Inventory();
 
         public Person() { }
 
@@ -43,7 +44,38 @@
             Name = "Thief " + GetRandomLastName();
             Charactercolor = ConsoleColor.Red;
         }
+
+        public bool StealFrom(Civilian civilian, Random rnd)
+        {
+            if (civilian.Inventory.Items.Count == 0)
+            {
+                Console.WriteLine($"{Name} tried to steal from {civilian.Name}, but they have nothing to steal!");
+                return false;
+            }
+
+            // Add a success rate (e.g., 70% chance)
+            if (rnd.Next(100) < 70)
+            {
+                int randomIndex = rnd.Next(civilian.Inventory.Items.Count);
+                string stolenItem = civilian.Inventory.Items[randomIndex];
+
+                civilian.Inventory.RemoveItem(stolenItem);
+                this.Inventory.AddItem(stolenItem);
+
+                Console.WriteLine($"{Name} successfully stole {stolenItem} from {civilian.Name}!");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"{Name} tried to steal from {civilian.Name} but failed!");
+                return false;
+            }
+        }
     }
+
+
+
+
 
     class Police : Person
     {
@@ -55,6 +87,9 @@
         }
     }
 
+
+
+
     class Civilian : Person
     {
         public Civilian(int randomX, int randomY) : base(randomX, randomY)
@@ -62,6 +97,8 @@
             Character = "C";
             Name = "Civilian " + GetRandomLastName(); ;
             Charactercolor = ConsoleColor.Green;
+            Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
+
         }
     }
 

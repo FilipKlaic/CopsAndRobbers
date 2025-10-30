@@ -27,7 +27,7 @@
         public void ShowItems()
         {
             if (Items.Count == 0)
-                Console.WriteLine("Inventory list is empty");
+                Console.WriteLine("");
             else
                 Console.WriteLine(string.Join(", ", Items));
         }

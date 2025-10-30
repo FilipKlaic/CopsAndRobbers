@@ -104,12 +104,6 @@
                     Console.WriteLine($"{policeNames} met {thiefNames}!");
 
 
-                    var caughtThieves = populatedIndex.OfType<Thief>().ToList();       // denna för att lägga ihop dom i samma string
-                    foreach (var thief in caughtThieves)
-                    {
-
-                    }
-
                 }
 
                 // Civilian vs Thief
