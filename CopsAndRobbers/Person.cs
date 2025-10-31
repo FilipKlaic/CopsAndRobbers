@@ -29,14 +29,14 @@
 
         public virtual void Draw()
         {
-            // Ensure the cursor position is within console bounds
-            //if (Y >= 0 && Y < Console.WindowWidth && X >= 0 && X < Console.WindowHeight)
-            //{
+            //Ensure the cursor position is within console bounds
+            if (Y >= 0 && Y < Console.WindowWidth && X >= 0 && X < Console.WindowHeight)
+            {
                 Console.ForegroundColor = Charactercolor;
                 Console.SetCursorPosition(Y, X);  // Note: SetCursorPosition takes (column, row) = (Y, X)
                 Console.Write(Character);
                 Console.ResetColor();
-            //}
+            }
         }
 
         public void ShowPersonsInfo()

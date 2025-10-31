@@ -7,6 +7,20 @@
    
             Random rnd = new Random();
 
+            try
+            {
+                Console.SetWindowSize(120, 50);  // width, height
+                Console.SetBufferSize(120, 50);
+            }
+            catch (Exception)
+            {
+                // If we can't resize, continue with current size
+                Console.WriteLine("Could not resize console window. Game may not display properly.");
+                Console.WriteLine("Please maximize your console window.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
+
             // Create characters without coordinates
             List<Person> characters = new List<Person>
     {
