@@ -173,7 +173,7 @@ namespace CopsAndRobbers
             logs.Enqueue(message);
 
             // Limit the queue size to 10 lines (remove the oldest if too many)
-            if (logs.Count > 15)
+            if (logs.Count > 5)
                 logs.Dequeue();
 
             // Redraw all log lines
