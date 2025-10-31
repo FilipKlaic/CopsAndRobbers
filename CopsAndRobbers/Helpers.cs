@@ -127,6 +127,7 @@ namespace CopsAndRobbers
                         var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
 
                         DrawLog($"Police {police.Name} catches Thief {thief.Name}!", city, prison);
+                        police?.StealFrom(thief, rnd, city, prison);
                         Thread.Sleep(1000);
                     }
                     
