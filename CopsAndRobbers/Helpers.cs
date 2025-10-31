@@ -1,10 +1,14 @@
-﻿namespace CopsAndRobbers
+﻿using System.Xml.Linq;
+
+namespace CopsAndRobbers
 {
     internal class Helpers
     {
+        private static Queue<string> logs = new Queue<string>();
+
 
         // Function to move all characters randomly
-     internal static void MoveCharactersRandomly(List<Person> characters, City city, Prison prison, char[,] canvas)
+        internal static void MoveCharactersRandomly(List<Person> characters, City city, Prison prison, char[,] canvas)
         {
             Random rnd = new Random();
 
@@ -76,21 +80,21 @@
                     previousPositions[p] = (p.X, p.Y);
                 }
 
-                // show logs below the field
-                int logStartRow = city.Height + prison.Height + 2;
-                Console.SetCursorPosition(0, logStartRow);
+                //// show logs below the field
+                //int logStartRow = city.Height + prison.Height + 2;
+                //Console.SetCursorPosition(0, logStartRow);
 
-                // Clear previous logs
-                for (int i = 0; i < characters.Count + 1; i++)
-                {
-                    Console.SetCursorPosition(0, logStartRow + i);
-                    Console.Write(new string(' ', Console.WindowWidth));
-                }
+                //// Clear previous logs
+                //for (int i = 0; i < characters.Count + 1; i++)
+                //{
+                //    Console.SetCursorPosition(0, logStartRow + i);
+                //    Console.Write(new string(' ', Console.WindowWidth));
+                //}
 
                 HandleCollisions(characters, city, prison, rnd);
 
                 //Console.SetCursorPosition(0, logStartRow);
-                //Console.WriteLine("Characters and their positions:");
+               //DrawLog("Characters and their positions:", city, prison);
                 //foreach (var p in characters)
                 //{
                 //    p.ShowPersonsInfo();
@@ -122,43 +126,46 @@
                         var thief = p1.RoleName == "Thief" ? p1 as Thief : p2 as Thief;
                         var civilian = p1.RoleName == "Civilian" ? p1 as Civilian : p2 as Civilian;
 
-                        thief?.StealFrom(civilian, rnd);
+                        thief?.StealFrom(civilian, rnd, city, prison);
                         //Console.SetCursorPosition(0, startLogRow);
-                        //Console.WriteLine("Thief meets Civilian");
+                        DrawLog($"💰 Thief {thief.Name} meets Civilian{civilian.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
                 
                     else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
                              (p1.RoleName == "Police officer" && p2.RoleName == "Thief"))
                     {
-                        // Something happens
-                        Console.SetCursorPosition(0, startLogRow);
-                        Console.WriteLine("Thief meets Police");
+                        var thief = p1.RoleName == "Thief" ? (Thief)p1 : (Thief)p2;
+                        var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
+
+                        DrawLog($"🚓 Police {police.Name} catches Thief {thief.Name}!", city, prison);
                         Thread.Sleep(1000);
                     }
                     // Civilian meets Civilian
                     else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
                     {
                         // Nothing happens
-                        Console.SetCursorPosition(0, startLogRow);
-                        Console.WriteLine("Civilian meets Civilian");
+                        //Console.SetCursorPosition(0, startLogRow);
+                       DrawLog($"🙂 Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
                   
                     else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
                              (p1.RoleName == "Civilian" && p2.RoleName == "Police officer"))
                     {
+                        var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
+                        var civilian = p1.RoleName == "Civilian" ? (Civilian)p1 : (Civilian)p2;
                         // Something happens
-                        Console.SetCursorPosition(0, startLogRow);
-                        Console.WriteLine("Police meets Civilian");
+                        //Console.SetCursorPosition(0, startLogRow);
+                        DrawLog($"👮 Police {police.Name} greets Civilian {civilian.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
                     
                     else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
                     {
                         // Nothing happens
-                        Console.SetCursorPosition(0, startLogRow);
-                        Console.WriteLine("Police meets Police");
+                        //Console.SetCursorPosition(0, startLogRow);
+                        DrawLog($"👮 Police {p1.Name} meets Police {p2.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
                    
@@ -167,6 +174,30 @@
                         // Could log or ignore
                     }
                 }
+            }
+        }
+
+        // Draws messages in the bottom area of the console
+        internal static void DrawLog(string message, City city, Prison prison)
+        {
+            int logStartRow = city.Height + prison.Height + 2;
+
+            // Add the new message to the queue
+            logs.Enqueue(message);
+
+            // Limit the queue size to 10 lines (remove the oldest if too many)
+            if (logs.Count > 15)
+                logs.Dequeue();
+
+            // Redraw all log lines
+            int i = 0;
+            foreach (var log in logs)
+            {
+                Console.SetCursorPosition(0, logStartRow + i);
+                Console.Write(new string(' ', Console.WindowWidth)); // clear line
+                Console.SetCursorPosition(0, logStartRow + i);
+                Console.WriteLine(log);
+                i++;
             }
         }
     }

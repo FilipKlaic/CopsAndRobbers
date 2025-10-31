@@ -30,13 +30,13 @@
         public virtual void Draw()
         {
             // Ensure the cursor position is within console bounds
-            if (Y >= 0 && Y < Console.WindowWidth && X >= 0 && X < Console.WindowHeight)
-            {
+            //if (Y >= 0 && Y < Console.WindowWidth && X >= 0 && X < Console.WindowHeight)
+            //{
                 Console.ForegroundColor = Charactercolor;
                 Console.SetCursorPosition(Y, X);  // Note: SetCursorPosition takes (column, row) = (Y, X)
                 Console.Write(Character);
                 Console.ResetColor();
-            }
+            //}
         }
 
         public void ShowPersonsInfo()
@@ -58,11 +58,11 @@
             Charactercolor = ConsoleColor.Red;
         }
 
-        public bool StealFrom(Civilian civilian, Random rnd)
+        public bool StealFrom(Civilian civilian, Random rnd, City city, Prison prison)
         {
             if (civilian.Inventory.Items.Count == 0)
             {
-                Console.WriteLine($"{Name} tried to steal from {civilian.Name}, but they have nothing to steal!");
+                Helpers.DrawLog($"{Name} tried to steal from {civilian.Name}, but they have nothing to steal!", city, prison);
                 return false;
             }
 
@@ -74,13 +74,14 @@
                 
                 civilian.Inventory.RemoveItem(stolenItem);
                 this.Inventory.AddItem(stolenItem);
-                
-                Console.WriteLine($"{Name} successfully stole {stolenItem} from {civilian.Name}!");
+
+                Helpers.DrawLog($"{Name} successfully stole {stolenItem} from {civilian.Name}!", city, prison);
+
                 return true;
             }
             else
             {
-                Console.WriteLine($"{Name} tried to steal from {civilian.Name} but failed!");
+                Helpers.DrawLog($"{Name} tried to steal from {civilian.Name} but failed!", city, prison);
                 return false;
             }
         }

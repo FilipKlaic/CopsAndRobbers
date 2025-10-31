@@ -4,6 +4,20 @@
     {
         static void Main(string[] args)
         {
+            // Set console window size to accommodate the game
+            //try
+            //{
+            //    Console.SetWindowSize(120, 50);  // width, height
+            //    //Console.SetBufferSize(120, 50);
+            //}
+            //catch (Exception)
+            //{
+            //    // If we can't resize, continue with current size
+            //    Console.WriteLine("Could not resize console window. Game may not display properly.");
+            //    Console.WriteLine("Please maximize your console window.");
+            //    Console.WriteLine("Press any key to continue...");
+            //    Console.ReadKey();
+            //}
             Random rnd = new Random();
 
             // Create characters without coordinates
@@ -27,7 +41,7 @@
         new Police(0,0,"Johansson2"),
         new Police(0,0,"Karlsson2"),
         new Police(0,0,"Nilsson2"),
-         new Civilian(0,0,"Jonsson"),
+        new Civilian(0,0,"Jonsson"),
         new Civilian(0,0,"Svensson"),
         new Civilian(0,0,"Olofsson"),
         new Thief(0,0,"Silverstedt"),
