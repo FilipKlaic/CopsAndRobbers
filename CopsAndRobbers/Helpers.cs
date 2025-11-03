@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace CopsAndRobbers
+﻿namespace CopsAndRobbers
 {
     internal class Helpers
     {
@@ -38,7 +36,7 @@ namespace CopsAndRobbers
             // Draw initial characters (on top of already drawn canvas)
             foreach (var p in characters)
             {
-                DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight, 
+                DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
                                       prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
             }
 
@@ -56,7 +54,7 @@ namespace CopsAndRobbers
                         Console.Write(canvas[prev.X, prev.Y]);
                     }
 
-                    // Only move characters that are not imprisoned or move within their current location
+                    // Move character randomly within their current location (city or prison)
                     MoveCharacter(p, rnd, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
                                  prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
 
@@ -85,7 +83,7 @@ namespace CopsAndRobbers
             {
                 Console.SetCursorPosition(p.Y, p.X);
                 Console.ForegroundColor = p.Charactercolor;
-                
+
                 // Show imprisoned thieves with different character
                 if (p.IsImprisoned && p.RoleName == "Thief")
                 {
@@ -168,7 +166,7 @@ namespace CopsAndRobbers
                         thief?.StealFrom(civilian, rnd, city, prison);
                         Thread.Sleep(1000);
                     }
-                
+
                     else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
                              (p1.RoleName == "Police officer" && p2.RoleName == "Thief"))
                     {
@@ -176,20 +174,20 @@ namespace CopsAndRobbers
                         var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
 
                         DrawLog($"Police {police.Name} encounters Thief {thief.Name}!", city, prison);
-                        
+
                         // Attempt to arrest the thief
                         police.ArrestThief(thief, rnd, city, prison);
-                        
+
                         Thread.Sleep(1000);
                     }
-                    
+
                     else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
                     {
                         // Nothing happens
-                       DrawLog($"Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
+                        DrawLog($"Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
-                  
+
                     else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
                              (p1.RoleName == "Civilian" && p2.RoleName == "Police officer"))
                     {
@@ -200,15 +198,15 @@ namespace CopsAndRobbers
                         DrawLog($"Police {police.Name} greets Civilian {civilian.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
-                    
+
                     else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
                     {
                         // Nothing happens
-                  
+
                         DrawLog($"Police {p1.Name} meets Police {p2.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
-                   
+
                     else
                     {
                         // Could log or ignore
