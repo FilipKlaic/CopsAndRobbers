@@ -9,6 +9,8 @@
         public string Name { get; set; }
         public string RoleName { get; set; }
         public Inventory Inventory { get; set; } = new Inventory(); // Inventory is created automatically for all objects
+        public bool IsImprisoned { get; set; } = false; // New property to track imprisonment status
+        public Place CurrentLocation { get; set; } // Track which location the person is in
 
         //public Person() { }
 
@@ -41,7 +43,33 @@
 
         public void ShowPersonsInfo()
         {
-            Console.WriteLine($"{RoleName} \'{Name}\' at position ({X}, {Y}) | Inventory: {string.Join(", ", Inventory.Items)}");
+            Console.WriteLine($"{RoleName} \'{Name}\' at position ({X}, {Y}) | Inventory: {string.Join(", ", Inventory.Items)} | Status: {(IsImprisoned ? "Imprisoned" : "Free")}");
+        }
+
+        // Method to move character to prison
+        public virtual void SendToPrison(Prison prison)
+        {
+            IsImprisoned = true;
+            CurrentLocation = prison;
+            
+            // Add the person to prison's person list
+            if (!prison.Persons.Contains(this))
+            {
+                prison.Persons.Add(this);
+            }
+        }
+
+        // Method to release character from prison (for future use)
+        public virtual void ReleaseFromPrison(City city)
+        {
+            IsImprisoned = false;
+            CurrentLocation = city;
+            
+            // Remove from prison and add back to city if needed
+            if (city.Persons != null && !city.Persons.Contains(this))
+            {
+                city.Persons.Add(this);
+            }
         }
     }
 

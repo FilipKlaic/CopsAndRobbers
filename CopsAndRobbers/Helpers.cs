@@ -19,10 +19,16 @@ namespace CopsAndRobbers
             int prisonStartCol = 0;
 
             // Calculate safe area inside city (avoid title row and borders)
-            int safeTop = cityStartRow + 2;             // skip title line and top border
-            int safeBottom = cityStartRow + city.Height - 2; // skip bottom border
-            int safeLeft = cityStartCol + 1;            // skip left border
-            int safeRight = cityStartCol + city.Width - 2; // skip right border
+            int citySafeTop = cityStartRow + 2;             // skip title line and top border
+            int citySafeBottom = cityStartRow + city.Height - 2; // skip bottom border
+            int citySafeLeft = cityStartCol + 1;            // skip left border
+            int citySafeRight = cityStartCol + city.Width - 2; // skip right border
+
+            // Calculate safe area inside prison
+            int prisonSafeTop = prisonStartRow + 2;             // skip title line and top border
+            int prisonSafeBottom = prisonStartRow + prison.Height - 2; // skip bottom border
+            int prisonSafeLeft = prisonStartCol + 1;            // skip left border
+            int prisonSafeRight = prisonStartCol + prison.Width - 2; // skip right border
 
             // Store previous positions so we can restore underlying canvas chars
             var previousPositions = new Dictionary<Person, (int X, int Y)>();
@@ -32,13 +38,8 @@ namespace CopsAndRobbers
             // Draw initial characters (on top of already drawn canvas)
             foreach (var p in characters)
             {
-                if (p.X >= safeTop && p.X <= safeBottom && p.Y >= safeLeft && p.Y <= safeRight)
-                {
-                    Console.SetCursorPosition(p.Y, p.X);
-                    Console.ForegroundColor = p.Charactercolor;
-                    Console.Write(p.Character);
-                    Console.ResetColor();
-                }
+                DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight, 
+                                      prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
             }
 
             // Main loop
@@ -55,26 +56,13 @@ namespace CopsAndRobbers
                         Console.Write(canvas[prev.X, prev.Y]);
                     }
 
-                    // choose random step (-1, 0, 1 each)
-                    int dx = rnd.Next(-1, 2);
-                    int dy = rnd.Next(-1, 2);
-
-                    int candidateX = p.X + dx;
-                    int candidateY = p.Y + dy;
-
-                    // clamp to safe area (so characters never go on borders)
-                    candidateX = Math.Max(safeTop, Math.Min(candidateX, safeBottom));
-                    candidateY = Math.Max(safeLeft, Math.Min(candidateY, safeRight));
-
-                    // update model position
-                    p.X = candidateX;
-                    p.Y = candidateY;
+                    // Only move characters that are not imprisoned or move within their current location
+                    MoveCharacter(p, rnd, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
+                                 prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
 
                     // draw character in new position (color)
-                    Console.SetCursorPosition(p.Y, p.X);
-                    Console.ForegroundColor = p.Charactercolor;
-                    Console.Write(p.Character);
-                    Console.ResetColor();
+                    DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
+                                          prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
 
                     // save previous position for next loop
                     previousPositions[p] = (p.X, p.Y);
@@ -82,17 +70,64 @@ namespace CopsAndRobbers
 
                 HandleCollisions(characters, city, prison, rnd);
 
-                //Console.SetCursorPosition(0, logStartRow);
-               //DrawLog("Characters and their positions:", city, prison);
-                //foreach (var p in characters)
-                //{
-                //    p.ShowPersonsInfo();
-                //}
-
                 // small pause so we can see movement
                 Thread.Sleep(400);
             }
+        }
+
+        private static void DrawCharacterAtPosition(Person p, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
+                                                   int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
+        {
+            bool inCity = p.X >= citySafeTop && p.X <= citySafeBottom && p.Y >= citySafeLeft && p.Y <= citySafeRight;
+            bool inPrison = p.X >= prisonSafeTop && p.X <= prisonSafeBottom && p.Y >= prisonSafeLeft && p.Y <= prisonSafeRight;
+
+            if (inCity || inPrison)
+            {
+                Console.SetCursorPosition(p.Y, p.X);
+                Console.ForegroundColor = p.Charactercolor;
+                
+                // Show imprisoned thieves with different character
+                if (p.IsImprisoned && p.RoleName == "Thief")
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.Write("I"); // 'I' for Imprisoned
+                }
+                else
+                {
+                    Console.Write(p.Character);
+                }
+                Console.ResetColor();
             }
+        }
+
+        private static void MoveCharacter(Person p, Random rnd, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
+                                        int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
+        {
+            // choose random step (-1, 0, 1 each)
+            int dx = rnd.Next(-1, 2);
+            int dy = rnd.Next(-1, 2);
+
+            int candidateX = p.X + dx;
+            int candidateY = p.Y + dy;
+
+            // Determine movement bounds based on imprisonment status
+            if (p.IsImprisoned)
+            {
+                // Imprisoned characters can only move within prison
+                candidateX = Math.Max(prisonSafeTop, Math.Min(candidateX, prisonSafeBottom));
+                candidateY = Math.Max(prisonSafeLeft, Math.Min(candidateY, prisonSafeRight));
+            }
+            else
+            {
+                // Free characters can only move within city
+                candidateX = Math.Max(citySafeTop, Math.Min(candidateX, citySafeBottom));
+                candidateY = Math.Max(citySafeLeft, Math.Min(candidateY, citySafeRight));
+            }
+
+            // update model position
+            p.X = candidateX;
+            p.Y = candidateY;
+        }
 
         public static void HandleCollisions(List<Person> characters, City city, Prison prison, Random rnd)
         {
@@ -109,13 +144,27 @@ namespace CopsAndRobbers
                     if (p1.X != p2.X || p1.Y != p2.Y)
                         continue;
 
+                    // Skip interactions involving imprisoned characters (except within prison)
+                    if (p1.IsImprisoned && p2.IsImprisoned)
+                    {
+                        // Imprisoned characters can interact with each other
+                        DrawLog($"Imprisoned {p1.Name} meets imprisoned {p2.Name} in prison", city, prison);
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                    else if (p1.IsImprisoned || p2.IsImprisoned)
+                    {
+                        // Skip interactions between imprisoned and free characters
+                        continue;
+                    }
+
                     if ((p1.RoleName == "Thief" && p2.RoleName == "Civilian") ||
                         (p1.RoleName == "Civilian" && p2.RoleName == "Thief"))
                     {
                         var thief = p1.RoleName == "Thief" ? p1 as Thief : p2 as Thief;
                         var civilian = p1.RoleName == "Civilian" ? p1 as Civilian : p2 as Civilian;
 
-                        DrawLog($" Thief {thief.Name} meets Civilian{civilian.Name}", city, prison);
+                        DrawLog($"Thief {thief.Name} meets Civilian {civilian.Name}", city, prison);
                         thief?.StealFrom(civilian, rnd, city, prison);
                         Thread.Sleep(1000);
                     }
@@ -126,7 +175,11 @@ namespace CopsAndRobbers
                         var thief = p1.RoleName == "Thief" ? (Thief)p1 : (Thief)p2;
                         var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
 
-                        DrawLog($"Police {police.Name} catches Thief {thief.Name}!", city, prison);
+                        DrawLog($"Police {police.Name} encounters Thief {thief.Name}!", city, prison);
+                        
+                        // Attempt to arrest the thief
+                        police.ArrestThief(thief, rnd, city, prison);
+                        
                         Thread.Sleep(1000);
                     }
                     
