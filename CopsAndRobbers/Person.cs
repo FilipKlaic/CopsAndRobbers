@@ -73,10 +73,6 @@
         }
     }
 
-
-
-
-
     class Police : Person
     {
         public Police(int randomX, int randomY) : base(randomX, randomY)
@@ -86,9 +82,6 @@
             Charactercolor = ConsoleColor.Blue;
         }
     }
-
-
-
 
     class Civilian : Person
     {
@@ -104,7 +97,9 @@
 
     static class Names
     {
-        public static List<string> LastNames = new List<string>        {
+        public static List<string> LastNames = new List<string>
+        {
+            // Original names
             "Baggins",
             "Stark",
             "Lupin",
@@ -119,9 +114,54 @@
             "Archer",
             "Gambit",
             "Parker",
-            "Addams"
+            "Addams",
+            
+            // Additional names (45 more to reach 4x = 60 total)
+            "Holmes",
+            "Watson",
+            "Poirot",
+            "Bond",
+            "Bourne",
+            "McClane",
+            "Ripley",
+            "Connor",
+            "Wick",
+            "Hunt",
+            "Drake",
+            "Croft",
+            "Freeman",
+            "Shepard",
+            "Price",
+            "Soap",
+            "Ghost",
+            "Roach",
+            "Woods",
+            "Mason",
+            "Reznov",
+            "Menendez",
+            "Makarov",
+            "Zakhaev",
+            "Shepherd",
+            "Ramirez",
+            "Morgan",
+            "Cross",
+            "Fisher",
+            "Lambert",
+            "Grimsdottir",
+            "Redding",
+            "Bishop",
+            "Torres",
+            "Reed",
+            "Kane",
+            "Lynch",
+            "Stone",
+            "Black",
+            "White",
+            "Gray",
+            "Green",
+            "Brown",
+            "Silver",
+            "Gold"
         };
     }
-
-
 }
