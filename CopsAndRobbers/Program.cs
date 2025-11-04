@@ -74,8 +74,8 @@
 
             Console.WriteLine();
 
-            // Draw everything on the console
-            Place.UpdateDrawing(canvas);
+            // Draws the prision and city borders
+            Place.DrawDrawing(canvas);
 
             //MoveCharactersRandomly(characters, city);
 

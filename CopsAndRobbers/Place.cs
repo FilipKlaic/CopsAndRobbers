@@ -48,8 +48,8 @@
                 drawingCreated[startRow + Height - 1, startCol + col] = '=';
         }
 
-        // prints the drawing 
-        public static void UpdateDrawing(char[,] drawingImport)
+        // Draws the prision and city borders
+        public static void DrawDrawing(char[,] drawingImport)
         {
             //Console.Clear();
 
