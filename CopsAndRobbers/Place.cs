@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CopsAndRobbers
+﻿namespace CopsAndRobbers
 {
     internal class Place
     {
@@ -54,7 +48,7 @@ namespace CopsAndRobbers
                 drawingCreated[startRow + Height - 1, startCol + col] = '=';
         }
 
-        // Updates or prints the drawing (similar to UpdateDrawing)
+        // prints the drawing 
         public static void UpdateDrawing(char[,] drawingImport)
         {
             //Console.Clear();

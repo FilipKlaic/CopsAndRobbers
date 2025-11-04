@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-
-namespace CopsAndRobbers
+﻿namespace CopsAndRobbers
 {
     internal class Program
     {
@@ -94,7 +90,7 @@ namespace CopsAndRobbers
             }
 
             Helpers.MoveCharactersRandomly(characters, city, prison, canvas);
-           
+
         }
     }
 }

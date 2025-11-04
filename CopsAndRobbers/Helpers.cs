@@ -73,6 +73,7 @@
             }
         }
 
+
         private static void DrawCharacterAtPosition(Person p, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
                                                    int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
         {
