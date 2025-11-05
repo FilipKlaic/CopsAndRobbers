@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CopsAndRobbers
+﻿namespace CopsAndRobbers
 {
     internal class Civilian : Person
     {
@@ -13,6 +7,8 @@ namespace CopsAndRobbers
             Character = "C";
             Charactercolor = ConsoleColor.Green;
             Inventory = new Inventory(new List<string> { "Keys", "Phone", "Cash", "Watch" });
+
+
         }
 
     }

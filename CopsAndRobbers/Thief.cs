@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CopsAndRobbers
+﻿namespace CopsAndRobbers
 {
     class Thief : Person
     {
         public Thief(int randomX, int randomY, string name = "Unknown Thief") : base(randomX, randomY, name, "Thief")
         {
             Character = "T";
-            Charactercolor = ConsoleColor.Red;
+            Charactercolor = ConsoleColor.Magenta;
         }
 
         public bool StealFrom(Civilian civilian, Random rnd, City city, Prison prison)
@@ -32,6 +26,8 @@ namespace CopsAndRobbers
                 this.Inventory.AddItem(stolenItem);
 
                 Helpers.DrawLog($"{Name} successfully stole {stolenItem} from {civilian.Name}!", city, prison);
+                Charactercolor = ConsoleColor.Red;
+                civilian.Charactercolor = ConsoleColor.White;
 
                 return true;
             }
