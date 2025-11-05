@@ -143,6 +143,8 @@
                     if (p1.X != p2.X || p1.Y != p2.Y)
                         continue;
 
+
+
                     // Skip interactions involving imprisoned characters (except within prison)
                     if (p1.IsImprisoned && p2.IsImprisoned)
                     {
@@ -156,6 +158,12 @@
                         // Skip interactions between imprisoned and free characters
                         continue;
                     }
+
+                    //Draw yellow X at collision point
+                    //Console.SetCursorPosition(p1.Y, p1.X);
+                    //Console.ForegroundColor = ConsoleColor.Yellow;
+                    //Console.Write("X");
+                    //Console.ResetColor();
 
                     if ((p1.RoleName == "Thief" && p2.RoleName == "Civilian") ||
                         (p1.RoleName == "Civilian" && p2.RoleName == "Thief"))
