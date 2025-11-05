@@ -96,6 +96,8 @@ namespace CopsAndRobbers
 
         public static void HandleCollisions(List<Person> characters, City city, Prison prison, Random rnd)
         {
+            int prisonStartRow = city.Height + 0;
+            int prisonStartCol = 0;
             int startLogRow = city.Height + prison.Height + 2;
             // Iterate through all pairs of characters
             for (int i = 0; i < characters.Count; i++)
@@ -126,8 +128,43 @@ namespace CopsAndRobbers
                         var thief = p1.RoleName == "Thief" ? (Thief)p1 : (Thief)p2;
                         var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
 
-                        DrawLog($"Police {police.Name} catches Thief {thief.Name}!", city, prison);
-                        police?.StealFrom(thief, rnd, city, prison);
+                        //DrawLog($"Police {police.Name} catches Thief {thief.Name}!", city, prison);
+                        //police?.StealFrom(thief, rnd, city, prison);
+                        //Thread.Sleep(1000);
+
+                        if (thief.Inventory.Items.Count > 0)
+                        {
+                            int jailTime = thief.Inventory.Items.Count; // 1 thing = 1 second
+                            DrawLog($"{police.Name} catches {thief.Name}! Sent to prison for {jailTime} seconds.", city, prison);
+
+                            // move the thief to prison
+                            thief.X = prisonStartRow + 2;
+                            thief.Y = prisonStartCol + 3;
+
+                            thief.X = rnd.Next(2, city.Height - 2);
+                            thief.Y = rnd.Next(2, city.Width - 2);
+
+                            // draw thief in the prison
+                            Console.SetCursorPosition(thief.Y, thief.X);
+                            Console.ForegroundColor = thief.Charactercolor;
+                            Console.Write(thief.Character);
+                            Console.ResetColor();
+
+                            Thread.Sleep(jailTime * 1000); // wait 
+
+                            // after prison return back to the city
+                            DrawLog($" {thief.Name} released from prison!", city, prison);
+
+                           
+                            thief.X = rnd.Next(2, city.Height - 2);
+                            thief.Y = rnd.Next(2, city.Width - 2);
+                        }
+                        else
+                        {
+                            // if thief has nothing 
+                            DrawLog($"{police.Name} stops {thief.Name}, but finds nothing.", city, prison);
+                        }
+
                         Thread.Sleep(1000);
                     }
                     
