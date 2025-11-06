@@ -69,25 +69,14 @@
             char[,] canvas = new char[totalHeight, totalWidth];
 
 
-            city.DrawingClass(canvas, 0, 0);                       // draw the City 
-            prison.DrawingClass(canvas, city.Height + 0, 0);      // draw Prison with a 1-line gap
+            city.CreateDrawingPreset(canvas, 0, 0);                       // draw the City 
+            prison.CreateDrawingPreset(canvas, city.Height + 0, 0);      // draw Prison with a 1-line gap
 
             Console.WriteLine();
 
             // Draws the prision and city borders
-            Place.DrawDrawing(canvas);
+            Place.PlaceDrawing(canvas);
 
-            //MoveCharactersRandomly(characters, city);
-
-            // Draw characters with color on top of the field
-            foreach (var p in characters)
-            {
-                // Ensure character stays inside City borders (avoid frame)
-                if (p.X > 0 && p.X < city.Height - 1 && p.Y > 0 && p.Y < city.Width - 1)
-                {
-                    p.Draw(); // Use Charactercolor
-                }
-            }
 
             Helpers.MoveCharactersRandomly(characters, city, prison, canvas);
 

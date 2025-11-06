@@ -6,7 +6,6 @@
         private static Queue<string> logs = new Queue<string>();
 
 
-        // Function to move all characters randomly
         internal static void MoveCharactersRandomly(List<Person> characters, City city, Prison prison, char[,] canvas)
         {
             Random rnd = new Random();
@@ -36,7 +35,6 @@
                 previousPositions[p] = (p.X, p.Y);
 
             }
-
 
             // Main loop
             while (true)
@@ -79,10 +77,16 @@
                     }
                 }
                 // pass collision positions
-                HandleCollisions(characters, collisionPositions, city, prison, rnd);
+                if (collisionPositions.Count > 0)
+                {
+                    HandleCollisions(characters, collisionPositions, city, prison, rnd);
+                    Thread.Sleep(2000);
 
-
-
+                }
+                else
+                {
+                    Thread.Sleep(300);
+                }
             }
         }
 
@@ -139,6 +143,8 @@
                 }
             }
 
+
+
             // Create a list to store collision positions
             var collisionPositions = new List<(int X, int Y)>();
 
@@ -150,6 +156,12 @@
                 }
             }
 
+            //if no collisions happend
+            if (collisionPositions.Count == 0)
+            {
+                return collisionPositions;
+
+            }
 
             //  Write out number of people at pos
             foreach (var pos in collisionPositions)
@@ -294,9 +306,9 @@
                         {
 
                         }
-                        Thread.Sleep(2000);
 
                     }
+
                 }
             }
         }

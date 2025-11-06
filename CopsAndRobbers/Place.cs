@@ -16,10 +16,10 @@
             Persons = new List<Person>();
         }
 
-        // Creates the drawing (similar to DrawingClass)
-        public virtual void DrawingClass(char[,] drawingCreated, int startRow, int startCol)
+
+        public virtual void CreateDrawingPreset(char[,] drawingCreated, int startRow, int startCol)
         {
-            //Console.Clear();
+
 
             // Top border with title
             string topLine = "======" + Title + "===";
@@ -48,8 +48,10 @@
                 drawingCreated[startRow + Height - 1, startCol + col] = '=';
         }
 
+
+
         // Draws the prision and city borders
-        public static void DrawDrawing(char[,] drawingImport)
+        public static void PlaceDrawing(char[,] drawingImport)
         {
             //Console.Clear();
 
