@@ -156,12 +156,16 @@
             }
 
 
-            //  Draw yellow X at collision positions first
+            //  Write out number of people at pos
             foreach (var pos in collisionPositions)
             {
                 Console.SetCursorPosition(pos.Y, pos.X);
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("X");
+
+                // Get the count from the dictionary
+                int occupiedPeople = positionCounts[pos];
+
+                Console.Write(occupiedPeople.ToString());
                 Console.ResetColor();
             }
 
