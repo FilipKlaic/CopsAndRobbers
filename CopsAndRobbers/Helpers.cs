@@ -92,8 +92,8 @@
                                               prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
                     }
                 }
-
-                HandleCollisions(characters, collisionPositions, city, prison, rnd); // pass collision positions
+                // pass collision positions
+                HandleCollisions(characters, collisionPositions, city, prison, rnd);
 
 
                 Thread.Sleep(400);
@@ -203,13 +203,10 @@
 
 
 
-        // ---------------- UPDATED METHOD SIGNATURE BELOW ----------------
-        public static void HandleCollisions(List<Person> characters, List<(int X, int Y)> collisionPositions, City city, Prison prison, Random rnd)
-        // ---------------------------------------------------------------
-        {
-            int startLogRow = city.Height + prison.Height + 2;
 
-            // ---------------- NEW LOOP USING collisionPositions ----------------
+        public static void HandleCollisions(List<Person> characters, List<(int X, int Y)> collisionPositions, City city, Prison prison, Random rnd)
+        {
+
             foreach (var pos in collisionPositions)
             {
                 var collided = characters.Where(p => p.X == pos.X && p.Y == pos.Y).ToList();
