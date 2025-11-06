@@ -69,7 +69,7 @@
                 //  Draw characters
                 foreach (var p in characters)
                 {
-                    // Only draw if NOT in a collision ( X )
+                    // Only draw if NOT in a collision 
                     if (!collisionPositions.Any(cPos => cPos.X == p.X && cPos.Y == p.Y))
                     {
                         DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
@@ -80,12 +80,12 @@
                 if (collisionPositions.Count > 0)
                 {
                     HandleCollisions(characters, collisionPositions, city, prison, rnd);
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1800);
 
                 }
                 else
                 {
-                    Thread.Sleep(300);
+                    Thread.Sleep(150);
                 }
             }
         }
@@ -124,7 +124,7 @@
         // Create a list of Colliding indexes
         private static List<(int X, int Y)> GetCollisionPositions(List<Person> characters)
         {
-
+            // Number of people at pos
             var positionCounts = new Dictionary<(int X, int Y), int>();
 
             // Count characters at each position
@@ -145,7 +145,7 @@
 
 
 
-            // Create a list to store collision positions
+            // List to store the collisions
             var collisionPositions = new List<(int X, int Y)>();
 
             foreach (var anomaly in positionCounts)
@@ -203,6 +203,7 @@
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.Write("I"); // 'I' for Imprisoned
                 }
+
                 else
                 {
                     Console.Write(p.Character); // Normal character symbol

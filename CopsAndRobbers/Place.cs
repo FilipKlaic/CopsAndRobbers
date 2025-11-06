@@ -27,10 +27,12 @@
             if (remaining > 0)
                 topLine += new string('=', remaining);
 
+            //rubriken
             for (int col = 0; col < Math.Min(topLine.Length, Width); col++)
             {
                 drawingCreated[startRow, startCol + col] = topLine[col];
             }
+
 
             // Field body (with side borders)
             for (int row = 1; row < Height - 1; row++)
