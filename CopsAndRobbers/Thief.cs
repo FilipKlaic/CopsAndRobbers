@@ -19,6 +19,7 @@
             // Add a success rate (e.g., 70% chance)
             if (rnd.Next(100) < 70)
             {
+                //steals a random number of items
                 int randomIndex = rnd.Next(civilian.Inventory.Items.Count);
                 string stolenItem = civilian.Inventory.Items[randomIndex];
 

@@ -115,7 +115,7 @@
                 var pos = (p.X, p.Y);
 
 
-                //if pos1 == pos2
+                //if pos1 == pos2   add count
                 if (positionCounts.ContainsKey(pos))
                 {
                     positionCounts[pos]++;
@@ -130,11 +130,11 @@
             // Create a list to store collision positions
             var collisionPositions = new List<(int X, int Y)>();
 
-            foreach (var kvp in positionCounts)
+            foreach (var anomaly in positionCounts)
             {
-                if (kvp.Value > 1)  // More than 1 character at this position
+                if (anomaly.Value > 1)  // More than 1 character at this position
                 {
-                    collisionPositions.Add(kvp.Key);
+                    collisionPositions.Add(anomaly.Key);
                 }
             }
 
