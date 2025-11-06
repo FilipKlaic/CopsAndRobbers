@@ -66,21 +66,12 @@
                     MoveCharacter(p, rnd, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
                                  prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
 
-                    // Save previous position for next loop iteration
+                    // Save previous position for next loop iteration (forMousePos)
                     previousPositions[p] = (p.X, p.Y);
                 }
 
                 //Detect collision positions before drawing
                 var collisionPositions = GetCollisionPositions(characters);
-
-                //  Draw yellow X at collision positions first
-                foreach (var pos in collisionPositions)
-                {
-                    Console.SetCursorPosition(pos.Y, pos.X);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("X");
-                    Console.ResetColor();
-                }
 
                 //  Draw characters
                 foreach (var p in characters)
@@ -100,6 +91,35 @@
             }
         }
 
+        // Helper method to move a single character randomly within bounds
+        private static void MoveCharacter(Person p, Random rnd, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
+                                        int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
+        {
+            // Choose random step (-1, 0, 1 each) for X and Y
+            int dx = rnd.Next(-1, 2);
+            int dy = rnd.Next(-1, 2);
+
+            int candidateX = p.X + dx;
+            int candidateY = p.Y + dy;
+
+            // Determine movement bounds based on imprisonment status
+            if (p.IsImprisoned)
+            {
+                // Imprisoned characters can only move within prison bounds
+                candidateX = Math.Max(prisonSafeTop, Math.Min(candidateX, prisonSafeBottom));
+                candidateY = Math.Max(prisonSafeLeft, Math.Min(candidateY, prisonSafeRight));
+            }
+            else
+            {
+                // Free characters can only move within city bounds
+                candidateX = Math.Max(citySafeTop, Math.Min(candidateX, citySafeBottom));
+                candidateY = Math.Max(citySafeLeft, Math.Min(candidateY, citySafeRight));
+            }
+
+            // Update model position
+            p.X = candidateX;
+            p.Y = candidateY;
+        }
 
 
         // Create a list of Colliding indexes
@@ -135,7 +155,17 @@
                 }
             }
 
-            // Return the list of collision positions
+
+            //  Draw yellow X at collision positions first
+            foreach (var pos in collisionPositions)
+            {
+                Console.SetCursorPosition(pos.Y, pos.X);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("X");
+                Console.ResetColor();
+            }
+
+            // Return the list of collision positions for HandleCollisions
             return collisionPositions;
         }
 
@@ -171,67 +201,32 @@
         }
 
 
-        // Helper method to move a single character randomly within bounds
-        private static void MoveCharacter(Person p, Random rnd, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
-                                        int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
-        {
-            // Choose random step (-1, 0, 1 each) for X and Y
-            int dx = rnd.Next(-1, 2);
-            int dy = rnd.Next(-1, 2);
-
-            int candidateX = p.X + dx;
-            int candidateY = p.Y + dy;
-
-            // Determine movement bounds based on imprisonment status
-            if (p.IsImprisoned)
-            {
-                // Imprisoned characters can only move within prison bounds
-                candidateX = Math.Max(prisonSafeTop, Math.Min(candidateX, prisonSafeBottom));
-                candidateY = Math.Max(prisonSafeLeft, Math.Min(candidateY, prisonSafeRight));
-            }
-            else
-            {
-                // Free characters can only move within city bounds
-                candidateX = Math.Max(citySafeTop, Math.Min(candidateX, citySafeBottom));
-                candidateY = Math.Max(citySafeLeft, Math.Min(candidateY, citySafeRight));
-            }
-
-            // Update model position
-            p.X = candidateX;
-            p.Y = candidateY;
-        }
-
-
-
-
+        //interaction
         public static void HandleCollisions(List<Person> characters, List<(int X, int Y)> collisionPositions, City city, Prison prison, Random rnd)
         {
-
+            //        For evey charachter at a collision site
             foreach (var pos in collisionPositions)
             {
+                //Filters them out
                 var collided = characters.Where(p => p.X == pos.X && p.Y == pos.Y).ToList();
+
                 if (collided.Count < 2)
                     continue;
 
+                // Loop through all unique pairs of characters at this collision position
                 for (int i = 0; i < collided.Count; i++)
                 {
                     for (int j = i + 1; j < collided.Count; j++)
                     {
                         var p1 = collided[i];
                         var p2 = collided[j];
-                        // ---------------------------------------------------------------
-
-                        // (the rest of your collision logic below is unchanged)
-
-                        // Skip if characters are not on the same position
-                        // (REMOVED - no longer needed because we already filtered positions)
 
                         // Skip interactions involving imprisoned characters (except within prison)
                         if (p1.IsImprisoned && p2.IsImprisoned)
                         {
                             // Imprisoned characters can interact with each other
                             DrawLog($"Imprisoned {p1.Name} meets imprisoned {p2.Name} in prison", city, prison);
-                            Thread.Sleep(1000);
+
                             continue;
                         }
                         else if (p1.IsImprisoned || p2.IsImprisoned)
@@ -249,7 +244,7 @@
 
                             DrawLog($"Thief {thief.Name} meets Civilian {civilian.Name}", city, prison);
                             thief?.StealFrom(civilian, rnd, city, prison);
-                            Thread.Sleep(1000);
+
                         }
                         // Handle Police + Thief collision
                         else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
@@ -263,14 +258,14 @@
                             // Attempt to arrest the thief
                             police.ArrestThief(thief, rnd, city, prison);
 
-                            Thread.Sleep(1000);
+
                         }
                         // Handle Civilian + Civilian collision
                         else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
                         {
                             // Nothing happens, just a greeting
                             DrawLog($"Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
-                            Thread.Sleep(1000);
+
                         }
                         // Handle Police + Civilian collision
                         else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
@@ -281,18 +276,24 @@
 
                             // Nothing happens, just a greeting
                             DrawLog($"Police {police.Name} greets Civilian {civilian.Name}", city, prison);
-                            Thread.Sleep(1000);
+
                         }
                         // Handle Police + Police collision
                         else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
                         {
                             // Nothing happens, colleagues meet
                             DrawLog($"Police {p1.Name} meets Police {p2.Name}", city, prison);
-                            Thread.Sleep(1000);
+
+                        }
+                        else if (p1.RoleName == "Thief" && p2.RoleName == "Thief")
+                        {
+                            // Just log their meeting, similar to other cases
+                            DrawLog($"Thief {p1.Name} meets Thief {p2.Name}", city, prison);
+
                         }
                         else
                         {
-                            // Could log or ignore unknown collision types
+
                         }
                     }
                 }
