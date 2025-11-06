@@ -46,10 +46,10 @@
             // Main loop
             while (true)
             {
-                // 1. Erase all characters at their old positions
+                // Erase all characters at their old positions
                 foreach (var p in characters)
                 {
-                    // Restore underlying symbol at previous position from canvas (avoid erasing frame)
+                    // Wipe canvas
                     var prev = previousPositions[p];
                     if (prev.X >= 0 && prev.X < canvas.GetLength(0) && prev.Y >= 0 && prev.Y < canvas.GetLength(1))
                     {
@@ -59,7 +59,7 @@
                     }
                 }
 
-                // 2. Move all characters to new positions
+                //  Move all characters to new positions
                 foreach (var p in characters)
                 {
                     // Move character randomly within their current location (city or prison)
@@ -70,10 +70,10 @@
                     previousPositions[p] = (p.X, p.Y);
                 }
 
-                // 3. NEW: Detect collision positions before drawing
+                //Detect collision positions before drawing
                 var collisionPositions = GetCollisionPositions(characters);
 
-                // 4. NEW: Draw yellow X at collision positions first
+                //  Draw yellow X at collision positions first
                 foreach (var pos in collisionPositions)
                 {
                     Console.SetCursorPosition(pos.Y, pos.X);
@@ -82,10 +82,10 @@
                     Console.ResetColor();
                 }
 
-                // 5. Draw characters (skip positions that have collisions to keep yellow X visible)
+                //  Draw characters
                 foreach (var p in characters)
                 {
-                    // NEW: Only draw if NOT in a collision (so yellow X stays visible)
+                    // Only draw if NOT in a collision ( X )
                     if (!collisionPositions.Any(cPos => cPos.X == p.X && cPos.Y == p.Y))
                     {
                         DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
@@ -93,39 +93,48 @@
                     }
                 }
 
-                // 6. Handle collision interactions (stealing, arrests, logging)
+
                 HandleCollisions(characters, city, prison, rnd);
 
-                // Small pause so we can see movement (400ms between cycles)
+
                 Thread.Sleep(400);
             }
         }
 
-        // NEW: Helper method to detect positions where multiple characters collide
+
+
+        // Create a list of Colliding indexes
         private static List<(int X, int Y)> GetCollisionPositions(List<Person> characters)
         {
-            // Dictionary to count how many characters are at each position
+
             var positionCounts = new Dictionary<(int X, int Y), int>();
 
             // Count characters at each position
             foreach (var p in characters)
             {
                 var pos = (p.X, p.Y);
+
+
+                //if pos1 == pos2
                 if (positionCounts.ContainsKey(pos))
+                {
                     positionCounts[pos]++;
+                }
                 else
+                {
                     positionCounts[pos] = 1;
+
+                }
             }
 
             // Create a list to store collision positions
             var collisionPositions = new List<(int X, int Y)>();
 
-            // Loop through all positions and add those with multiple characters
             foreach (var kvp in positionCounts)
             {
                 if (kvp.Value > 1)  // More than 1 character at this position
                 {
-                    collisionPositions.Add(kvp.Key);  // Add the position to the list
+                    collisionPositions.Add(kvp.Key);
                 }
             }
 
