@@ -2,6 +2,7 @@
 {
     internal class Helpers
     {
+        // Queue to store log messages for display at bottom of console
         private static Queue<string> logs = new Queue<string>();
 
 
@@ -31,8 +32,10 @@
             // Store previous positions so we can restore underlying canvas chars
             var previousPositions = new Dictionary<Person, (int X, int Y)>();
             foreach (var p in characters)
+            {
                 previousPositions[p] = (p.X, p.Y);
 
+            }
             // Draw initial characters (on top of already drawn canvas)
             foreach (var p in characters)
             {
@@ -43,49 +46,111 @@
             // Main loop
             while (true)
             {
+                // 1. Erase all characters at their old positions
                 foreach (var p in characters)
                 {
-                    // restore underlying symbol at previous position from canvas (avoid erasing frame)
+                    // Restore underlying symbol at previous position from canvas (avoid erasing frame)
                     var prev = previousPositions[p];
                     if (prev.X >= 0 && prev.X < canvas.GetLength(0) && prev.Y >= 0 && prev.Y < canvas.GetLength(1))
                     {
-                        // restore the canvas char (this will put '=' or 'X' or ' ' back)
+                        // Restore the canvas char (this will put '=' or 'X' or ' ' back)
                         Console.SetCursorPosition(prev.Y, prev.X);
                         Console.Write(canvas[prev.X, prev.Y]);
                     }
+                }
 
+                // 2. Move all characters to new positions
+                foreach (var p in characters)
+                {
                     // Move character randomly within their current location (city or prison)
                     MoveCharacter(p, rnd, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
                                  prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
 
-                    // draw character in new position (color)
-                    DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
-                                          prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
-
-                    // save previous position for next loop
+                    // Save previous position for next loop iteration
                     previousPositions[p] = (p.X, p.Y);
                 }
 
+                // 3. NEW: Detect collision positions before drawing
+                var collisionPositions = GetCollisionPositions(characters);
+
+                // 4. NEW: Draw yellow X at collision positions first
+                foreach (var pos in collisionPositions)
+                {
+                    Console.SetCursorPosition(pos.Y, pos.X);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("X");
+                    Console.ResetColor();
+                }
+
+                // 5. Draw characters (skip positions that have collisions to keep yellow X visible)
+                foreach (var p in characters)
+                {
+                    // NEW: Only draw if NOT in a collision (so yellow X stays visible)
+                    if (!collisionPositions.Any(cPos => cPos.X == p.X && cPos.Y == p.Y))
+                    {
+                        DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
+                                              prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
+                    }
+                }
+
+                // 6. Handle collision interactions (stealing, arrests, logging)
                 HandleCollisions(characters, city, prison, rnd);
 
-                // small pause so we can see movement
+                // Small pause so we can see movement (400ms between cycles)
                 Thread.Sleep(400);
             }
         }
 
+        // NEW: Helper method to detect positions where multiple characters collide
+        private static List<(int X, int Y)> GetCollisionPositions(List<Person> characters)
+        {
+            // Dictionary to count how many characters are at each position
+            var positionCounts = new Dictionary<(int X, int Y), int>();
 
+            // Count characters at each position
+            foreach (var p in characters)
+            {
+                var pos = (p.X, p.Y);
+                if (positionCounts.ContainsKey(pos))
+                    positionCounts[pos]++;
+                else
+                    positionCounts[pos] = 1;
+            }
+
+            // Create a list to store collision positions
+            var collisionPositions = new List<(int X, int Y)>();
+
+            // Loop through all positions and add those with multiple characters
+            foreach (var kvp in positionCounts)
+            {
+                if (kvp.Value > 1)  // More than 1 character at this position
+                {
+                    collisionPositions.Add(kvp.Key);  // Add the position to the list
+                }
+            }
+
+            // Return the list of collision positions
+            return collisionPositions;
+        }
+
+
+
+        // Helper method to draw a character at their position (with bounds checking)
         private static void DrawCharacterAtPosition(Person p, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
                                                    int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
         {
+            // Check if character is within city bounds
             bool inCity = p.X >= citySafeTop && p.X <= citySafeBottom && p.Y >= citySafeLeft && p.Y <= citySafeRight;
+            // Check if character is within prison bounds
             bool inPrison = p.X >= prisonSafeTop && p.X <= prisonSafeBottom && p.Y >= prisonSafeLeft && p.Y <= prisonSafeRight;
 
+            // Only draw if character is within valid bounds
             if (inCity || inPrison)
             {
                 Console.SetCursorPosition(p.Y, p.X);
                 Console.ForegroundColor = p.Charactercolor;
 
-                // Show imprisoned thieves with different character
+                // Show imprisoned thieves with different character ('I' instead of 'T')
                 if (p.IsImprisoned && p.RoleName == "Thief")
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -93,16 +158,18 @@
                 }
                 else
                 {
-                    Console.Write(p.Character);
+                    Console.Write(p.Character); // Normal character symbol
                 }
                 Console.ResetColor();
             }
         }
 
+
+        // Helper method to move a single character randomly within bounds
         private static void MoveCharacter(Person p, Random rnd, int citySafeTop, int citySafeBottom, int citySafeLeft, int citySafeRight,
                                         int prisonSafeTop, int prisonSafeBottom, int prisonSafeLeft, int prisonSafeRight)
         {
-            // choose random step (-1, 0, 1 each)
+            // Choose random step (-1, 0, 1 each) for X and Y
             int dx = rnd.Next(-1, 2);
             int dy = rnd.Next(-1, 2);
 
@@ -112,25 +179,29 @@
             // Determine movement bounds based on imprisonment status
             if (p.IsImprisoned)
             {
-                // Imprisoned characters can only move within prison
+                // Imprisoned characters can only move within prison bounds
                 candidateX = Math.Max(prisonSafeTop, Math.Min(candidateX, prisonSafeBottom));
                 candidateY = Math.Max(prisonSafeLeft, Math.Min(candidateY, prisonSafeRight));
             }
             else
             {
-                // Free characters can only move within city
+                // Free characters can only move within city bounds
                 candidateX = Math.Max(citySafeTop, Math.Min(candidateX, citySafeBottom));
                 candidateY = Math.Max(citySafeLeft, Math.Min(candidateY, citySafeRight));
             }
 
-            // update model position
+            // Update model position
             p.X = candidateX;
             p.Y = candidateY;
         }
 
+
+
+        // Method to handle all collision interactions between characters
         public static void HandleCollisions(List<Person> characters, City city, Prison prison, Random rnd)
         {
             int startLogRow = city.Height + prison.Height + 2;
+
             // Iterate through all pairs of characters
             for (int i = 0; i < characters.Count; i++)
             {
@@ -142,8 +213,6 @@
                     // Skip if characters are not on the same position
                     if (p1.X != p2.X || p1.Y != p2.Y)
                         continue;
-
-
 
                     // Skip interactions involving imprisoned characters (except within prison)
                     if (p1.IsImprisoned && p2.IsImprisoned)
@@ -159,12 +228,7 @@
                         continue;
                     }
 
-                    //Draw yellow X at collision point
-                    //Console.SetCursorPosition(p1.Y, p1.X);
-                    //Console.ForegroundColor = ConsoleColor.Yellow;
-                    //Console.Write("X");
-                    //Console.ResetColor();
-
+                    // Handle Thief + Civilian collision
                     if ((p1.RoleName == "Thief" && p2.RoleName == "Civilian") ||
                         (p1.RoleName == "Civilian" && p2.RoleName == "Thief"))
                     {
@@ -175,7 +239,7 @@
                         thief?.StealFrom(civilian, rnd, city, prison);
                         Thread.Sleep(1000);
                     }
-
+                    // Handle Police + Thief collision
                     else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
                              (p1.RoleName == "Police officer" && p2.RoleName == "Thief"))
                     {
@@ -189,50 +253,49 @@
 
                         Thread.Sleep(1000);
                     }
-
+                    // Handle Civilian + Civilian collision
                     else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
                     {
-                        // Nothing happens
+                        // Nothing happens, just a greeting
                         DrawLog($"Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
-
+                    // Handle Police + Civilian collision
                     else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
                              (p1.RoleName == "Civilian" && p2.RoleName == "Police officer"))
                     {
                         var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
                         var civilian = p1.RoleName == "Civilian" ? (Civilian)p1 : (Civilian)p2;
-                        // Nothing happens
 
+                        // Nothing happens, just a greeting
                         DrawLog($"Police {police.Name} greets Civilian {civilian.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
-
+                    // Handle Police + Police collision
                     else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
                     {
-                        // Nothing happens
-
+                        // Nothing happens, colleagues meet
                         DrawLog($"Police {p1.Name} meets Police {p2.Name}", city, prison);
                         Thread.Sleep(1000);
                     }
-
                     else
                     {
-                        // Could log or ignore
+                        // Could log or ignore unknown collision types
                     }
                 }
             }
         }
 
-        // Draws messages in the bottom area of the console
+        // Draws messages in the bottom area of the console (scrolling log)
         internal static void DrawLog(string message, City city, Prison prison)
         {
+            // Calculate where log area starts (below city and prison)
             int logStartRow = city.Height + prison.Height + 2;
 
             // Add the new message to the queue
             logs.Enqueue(message);
 
-            // Limit the queue size to 10 lines (remove the oldest if too many)
+            // Limit the queue size to 5 lines (remove the oldest if too many)
             if (logs.Count > 5)
                 logs.Dequeue();
 
@@ -241,7 +304,7 @@
             foreach (var log in logs)
             {
                 Console.SetCursorPosition(0, logStartRow + i);
-                Console.Write(new string(' ', Console.WindowWidth)); // clear line
+                Console.Write(new string(' ', Console.WindowWidth)); // Clear line
                 Console.SetCursorPosition(0, logStartRow + i);
                 Console.WriteLine(log);
                 i++;
