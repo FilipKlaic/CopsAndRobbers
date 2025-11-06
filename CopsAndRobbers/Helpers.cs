@@ -93,8 +93,7 @@
                     }
                 }
 
-
-                HandleCollisions(characters, city, prison, rnd);
+                HandleCollisions(characters, collisionPositions, city, prison, rnd); // pass collision positions
 
 
                 Thread.Sleep(400);
@@ -114,7 +113,6 @@
             {
                 var pos = (p.X, p.Y);
 
-
                 //if pos1 == pos2   add count
                 if (positionCounts.ContainsKey(pos))
                 {
@@ -123,7 +121,6 @@
                 else
                 {
                     positionCounts[pos] = 1;
-
                 }
             }
 
@@ -206,90 +203,100 @@
 
 
 
-        // Method to handle all collision interactions between characters
-        public static void HandleCollisions(List<Person> characters, City city, Prison prison, Random rnd)
+        // ---------------- UPDATED METHOD SIGNATURE BELOW ----------------
+        public static void HandleCollisions(List<Person> characters, List<(int X, int Y)> collisionPositions, City city, Prison prison, Random rnd)
+        // ---------------------------------------------------------------
         {
             int startLogRow = city.Height + prison.Height + 2;
 
-            // Iterate through all pairs of characters
-            for (int i = 0; i < characters.Count; i++)
+            // ---------------- NEW LOOP USING collisionPositions ----------------
+            foreach (var pos in collisionPositions)
             {
-                for (int j = i + 1; j < characters.Count; j++)
+                var collided = characters.Where(p => p.X == pos.X && p.Y == pos.Y).ToList();
+                if (collided.Count < 2)
+                    continue;
+
+                for (int i = 0; i < collided.Count; i++)
                 {
-                    var p1 = characters[i];
-                    var p2 = characters[j];
-
-                    // Skip if characters are not on the same position
-                    if (p1.X != p2.X || p1.Y != p2.Y)
-                        continue;
-
-                    // Skip interactions involving imprisoned characters (except within prison)
-                    if (p1.IsImprisoned && p2.IsImprisoned)
+                    for (int j = i + 1; j < collided.Count; j++)
                     {
-                        // Imprisoned characters can interact with each other
-                        DrawLog($"Imprisoned {p1.Name} meets imprisoned {p2.Name} in prison", city, prison);
-                        Thread.Sleep(1000);
-                        continue;
-                    }
-                    else if (p1.IsImprisoned || p2.IsImprisoned)
-                    {
-                        // Skip interactions between imprisoned and free characters
-                        continue;
-                    }
+                        var p1 = collided[i];
+                        var p2 = collided[j];
+                        // ---------------------------------------------------------------
 
-                    // Handle Thief + Civilian collision
-                    if ((p1.RoleName == "Thief" && p2.RoleName == "Civilian") ||
-                        (p1.RoleName == "Civilian" && p2.RoleName == "Thief"))
-                    {
-                        var thief = p1.RoleName == "Thief" ? p1 as Thief : p2 as Thief;
-                        var civilian = p1.RoleName == "Civilian" ? p1 as Civilian : p2 as Civilian;
+                        // (the rest of your collision logic below is unchanged)
 
-                        DrawLog($"Thief {thief.Name} meets Civilian {civilian.Name}", city, prison);
-                        thief?.StealFrom(civilian, rnd, city, prison);
-                        Thread.Sleep(1000);
-                    }
-                    // Handle Police + Thief collision
-                    else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
-                             (p1.RoleName == "Police officer" && p2.RoleName == "Thief"))
-                    {
-                        var thief = p1.RoleName == "Thief" ? (Thief)p1 : (Thief)p2;
-                        var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
+                        // Skip if characters are not on the same position
+                        // (REMOVED - no longer needed because we already filtered positions)
 
-                        DrawLog($"Police {police.Name} encounters Thief {thief.Name}!", city, prison);
+                        // Skip interactions involving imprisoned characters (except within prison)
+                        if (p1.IsImprisoned && p2.IsImprisoned)
+                        {
+                            // Imprisoned characters can interact with each other
+                            DrawLog($"Imprisoned {p1.Name} meets imprisoned {p2.Name} in prison", city, prison);
+                            Thread.Sleep(1000);
+                            continue;
+                        }
+                        else if (p1.IsImprisoned || p2.IsImprisoned)
+                        {
+                            // Skip interactions between imprisoned and free characters
+                            continue;
+                        }
 
-                        // Attempt to arrest the thief
-                        police.ArrestThief(thief, rnd, city, prison);
+                        // Handle Thief + Civilian collision
+                        if ((p1.RoleName == "Thief" && p2.RoleName == "Civilian") ||
+                            (p1.RoleName == "Civilian" && p2.RoleName == "Thief"))
+                        {
+                            var thief = p1.RoleName == "Thief" ? p1 as Thief : p2 as Thief;
+                            var civilian = p1.RoleName == "Civilian" ? p1 as Civilian : p2 as Civilian;
 
-                        Thread.Sleep(1000);
-                    }
-                    // Handle Civilian + Civilian collision
-                    else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
-                    {
-                        // Nothing happens, just a greeting
-                        DrawLog($"Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
-                        Thread.Sleep(1000);
-                    }
-                    // Handle Police + Civilian collision
-                    else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
-                             (p1.RoleName == "Civilian" && p2.RoleName == "Police officer"))
-                    {
-                        var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
-                        var civilian = p1.RoleName == "Civilian" ? (Civilian)p1 : (Civilian)p2;
+                            DrawLog($"Thief {thief.Name} meets Civilian {civilian.Name}", city, prison);
+                            thief?.StealFrom(civilian, rnd, city, prison);
+                            Thread.Sleep(1000);
+                        }
+                        // Handle Police + Thief collision
+                        else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
+                                 (p1.RoleName == "Police officer" && p2.RoleName == "Thief"))
+                        {
+                            var thief = p1.RoleName == "Thief" ? (Thief)p1 : (Thief)p2;
+                            var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
 
-                        // Nothing happens, just a greeting
-                        DrawLog($"Police {police.Name} greets Civilian {civilian.Name}", city, prison);
-                        Thread.Sleep(1000);
-                    }
-                    // Handle Police + Police collision
-                    else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
-                    {
-                        // Nothing happens, colleagues meet
-                        DrawLog($"Police {p1.Name} meets Police {p2.Name}", city, prison);
-                        Thread.Sleep(1000);
-                    }
-                    else
-                    {
-                        // Could log or ignore unknown collision types
+                            DrawLog($"Police {police.Name} encounters Thief {thief.Name}!", city, prison);
+
+                            // Attempt to arrest the thief
+                            police.ArrestThief(thief, rnd, city, prison);
+
+                            Thread.Sleep(1000);
+                        }
+                        // Handle Civilian + Civilian collision
+                        else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
+                        {
+                            // Nothing happens, just a greeting
+                            DrawLog($"Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
+                            Thread.Sleep(1000);
+                        }
+                        // Handle Police + Civilian collision
+                        else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
+                                 (p1.RoleName == "Civilian" && p2.RoleName == "Police officer"))
+                        {
+                            var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
+                            var civilian = p1.RoleName == "Civilian" ? (Civilian)p1 : (Civilian)p2;
+
+                            // Nothing happens, just a greeting
+                            DrawLog($"Police {police.Name} greets Civilian {civilian.Name}", city, prison);
+                            Thread.Sleep(1000);
+                        }
+                        // Handle Police + Police collision
+                        else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
+                        {
+                            // Nothing happens, colleagues meet
+                            DrawLog($"Police {p1.Name} meets Police {p2.Name}", city, prison);
+                            Thread.Sleep(1000);
+                        }
+                        else
+                        {
+                            // Could log or ignore unknown collision types
+                        }
                     }
                 }
             }
