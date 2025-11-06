@@ -36,12 +36,7 @@
                 previousPositions[p] = (p.X, p.Y);
 
             }
-            // Draw initial characters (on top of already drawn canvas)
-            foreach (var p in characters)
-            {
-                DrawCharacterAtPosition(p, citySafeTop, citySafeBottom, citySafeLeft, citySafeRight,
-                                      prisonSafeTop, prisonSafeBottom, prisonSafeLeft, prisonSafeRight);
-            }
+
 
             // Main loop
             while (true)
@@ -87,7 +82,7 @@
                 HandleCollisions(characters, collisionPositions, city, prison, rnd);
 
 
-                Thread.Sleep(400);
+
             }
         }
 
@@ -299,6 +294,8 @@
                         {
 
                         }
+                        Thread.Sleep(2000);
+
                     }
                 }
             }
