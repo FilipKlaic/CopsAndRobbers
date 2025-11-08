@@ -7,23 +7,13 @@
    
             Random rnd = new Random();
 
-            try
-            {
-                Console.SetWindowSize(120, 50);  // width, height
-                Console.SetBufferSize(120, 50);
-            }
-            catch (Exception)
-            {
-                // If we can't resize, continue with current size
-                Console.WriteLine("Could not resize console window. Game may not display properly.");
-                Console.WriteLine("Please maximize your console window.");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-            }
+            // Create two new objects: City and Prison
+            City city = new City();
+            Prison prison = new Prison();
 
             // Create characters without coordinates
             List<Person> characters = new List<Person>
-    {
+            {
         new Civilian(0,0,"Jonsson"),
         new Civilian(0,0,"Svensson"),
         new Civilian(0,0,"Olofsson"),
@@ -52,10 +42,10 @@
         new Police(0,0,"Karlsson3"),
         new Police(0,0,"Nilsson3")
     };
+            // Assign them to places
+            city.Persons = new List<Person>(characters); // all begin in city
+            prison.Persons = new List<Person>();
 
-            // Create two new objects: City and Prison
-            City city = new City();
-            Prison prison = new Prison();
 
             // Assign random positions inside the City
             foreach (var p in characters)
