@@ -212,7 +212,7 @@ namespace CopsAndRobbers
                     else if (p1.RoleName == "Police officer" && p2.RoleName == "Police officer")
                     {
                         // Nothing happens
-                  
+      
                         DrawLog($" Police {p1.Name} meets Police {p2.Name}", city, prison);
                         Thread.Sleep(300);
                     }
@@ -229,10 +229,6 @@ namespace CopsAndRobbers
         internal static void DrawLog(string message, City city, Prison prison)
         {
             int logStartRow = city.Height + prison.Height + 8;
-            //Console.SetCursorPosition(0, logStartRow);
-            //Console.ForegroundColor = ConsoleColor.Blue;
-            //Console.WriteLine("=======NEWS================================================");
-            //Console.ResetColor();
 
             // Add the new message to the queue
             logs.Enqueue(message);
