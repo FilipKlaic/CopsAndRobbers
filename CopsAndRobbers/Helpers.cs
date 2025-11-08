@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Drawing;
+using System.Xml.Linq;
 
 namespace CopsAndRobbers
 {
@@ -32,7 +33,9 @@ namespace CopsAndRobbers
             // Draw initial characters (on top of already drawn canvas)
             foreach (var p in characters)
             {
-                if (p.X >= safeTop && p.X <= safeBottom && p.Y >= safeLeft && p.Y <= safeRight)
+                if (p is Thief thief && thief.IsInPrison)
+                    continue;
+                else if (p.X >= safeTop && p.X <= safeBottom && p.Y >= safeLeft && p.Y <= safeRight)
                 {
                     Console.SetCursorPosition(p.Y, p.X);
                     Console.ForegroundColor = p.Charactercolor;
@@ -84,7 +87,7 @@ namespace CopsAndRobbers
                 HandleCollisions(characters, city, prison, rnd);
 
                 //Console.SetCursorPosition(0, logStartRow);
-               //DrawLog("Characters and their positions:", city, prison);
+                //DrawLog("Characters and their positions:", city, prison);
                 //foreach (var p in characters)
                 //{
                 //    p.ShowPersonsInfo();
@@ -93,7 +96,8 @@ namespace CopsAndRobbers
                 // small pause so we can see movement
                 Thread.Sleep(400);
             }
-            }
+        }
+            
 
         public static void HandleCollisions(List<Person> characters, City city, Prison prison, Random rnd)
         {
@@ -120,7 +124,7 @@ namespace CopsAndRobbers
 
                         DrawLog($" Thief {thief.Name} meets Civilian{civilian.Name}", city, prison);
                         thief?.StealFrom(civilian, rnd, city, prison);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(300);
                     }
                 
                     else if ((p1.RoleName == "Thief" && p2.RoleName == "Police officer") ||
@@ -139,12 +143,18 @@ namespace CopsAndRobbers
                             Console.ForegroundColor = ConsoleColor.Red;
                             DrawLog($"** Police {police.Name} catches {thief.Name}! Sent to prison for {jailTime} seconds.", city, prison);
 
+
                             // move the thief to prison
+                            city.Persons.Remove(thief);
+                            prison.Persons.Add(thief);
+
                             thief.X = prisonStartRow + 2;
                             thief.Y = prisonStartCol + 3;
 
-                            thief.X = rnd.Next(2, city.Height - 2);
-                            thief.Y = rnd.Next(2, city.Width - 2);
+                            int prisonX = prisonStartRow + rnd.Next(1, prison.Height - 1);
+                            int prisonY = prisonStartCol + rnd.Next(1, prison.Width - 1);
+                            thief.X = prisonX;
+                            thief.Y = prisonY;
 
                             // draw thief in the prison
                             Console.SetCursorPosition(thief.Y, thief.X);
@@ -152,15 +162,25 @@ namespace CopsAndRobbers
                             Console.Write(thief.Character);
                             Console.ResetColor();
 
+                            thief.PrisonReleaseTime = DateTime.Now.AddSeconds(jailTime);
+                            DrawCityStats(characters, city, prison);
+
+
                             Thread.Sleep(jailTime * 1000); // wait 
+
+                            Console.SetCursorPosition(thief.Y, thief.X);
+                            Console.Write(' ');
 
                             // after prison return back to the city
                             Console.ForegroundColor = ConsoleColor.Green;
                             DrawLog($" <<<Thief {thief.Name} released from prison!", city, prison);
 
-                           
+                            prison.Persons.Remove(thief);
+                            city.Persons.Add(thief);
                             thief.X = rnd.Next(2, city.Height - 2);
                             thief.Y = rnd.Next(2, city.Width - 2);
+
+                            DrawCityStats(characters, city, prison);
                         }
                         else
                         {
@@ -168,14 +188,14 @@ namespace CopsAndRobbers
                             DrawLog($" Police {police.Name} stops {thief.Name}, but finds nothing.", city, prison);
                         }
 
-                        Thread.Sleep(1000);
+                        Thread.Sleep(300);
                     }
                     
                     else if (p1.RoleName == "Civilian" && p2.RoleName == "Civilian")
                     {
                         // Nothing happens
                        DrawLog($" Civilian {p1.Name} meets Civilian {p2.Name}", city, prison);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(300);
                     }
                   
                     else if ((p1.RoleName == "Police officer" && p2.RoleName == "Civilian") ||
@@ -194,7 +214,7 @@ namespace CopsAndRobbers
                         // Nothing happens
                   
                         DrawLog($" Police {p1.Name} meets Police {p2.Name}", city, prison);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(300);
                     }
                    
                     else
@@ -208,18 +228,18 @@ namespace CopsAndRobbers
         // Draws messages in the bottom area of the console
         internal static void DrawLog(string message, City city, Prison prison)
         {
-            int logStartRow = city.Height + prison.Height + 7;
+            int logStartRow = city.Height + prison.Height + 8;
+            //Console.SetCursorPosition(0, logStartRow);
+            //Console.ForegroundColor = ConsoleColor.Blue;
+            //Console.WriteLine("=======NEWS================================================");
+            //Console.ResetColor();
 
-           
             // Add the new message to the queue
             logs.Enqueue(message);
 
             // Limit the queue size to 10 lines (remove the oldest if too many)
             if (logs.Count > 10)
                 logs.Dequeue();
-
-            Console.SetCursorPosition(0, logStartRow);
-            Console.WriteLine("=======NEWS===========");
 
             // Redraw all log lines
             int i = 1;
@@ -249,15 +269,21 @@ namespace CopsAndRobbers
                 Console.Write(new string(' ', Console.WindowWidth));
             }
 
-       
+            Console.SetCursorPosition(0, logStartRow);
+            Console.Write(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, logStartRow);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"=======CITY STATS: =========");
+            Console.WriteLine($"=======CITY STATS:=========================================");
             Console.SetCursorPosition(0, logStartRow + 1);
             Console.WriteLine($"  Police: {policeCount}");
             Console.WriteLine($"  Thieves: {thiefCount}");
             Console.WriteLine($"  Civilians: {civilianCount}");
             Console.WriteLine($"  In Prison: {prisonCount}");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("=======NEWS================================================");
+            Console.ResetColor();
+
         }
 
     }

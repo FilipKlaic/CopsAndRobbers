@@ -8,6 +8,9 @@ namespace CopsAndRobbers
 {
     class Thief : Person
     {
+        public DateTime? PrisonReleaseTime { get; set; } 
+        public bool IsInPrison => PrisonReleaseTime.HasValue && DateTime.Now < PrisonReleaseTime.Value;
+
         public Thief(int randomX, int randomY, string name = "Unknown Thief") : base(randomX, randomY, name, "Thief")
         {
             Character = "T";
@@ -31,13 +34,13 @@ namespace CopsAndRobbers
                 civilian.Inventory.RemoveItem(stolenItem);
                 this.Inventory.AddItem(stolenItem);
 
-                Helpers.DrawLog($"{Name} successfully stole {stolenItem} from {civilian.Name}!", city, prison);
+                Helpers.DrawLog($"!!! Thief {Name} successfully stole {stolenItem} from {civilian.Name}!", city, prison);
 
                 return true;
             }
             else
             {
-                Helpers.DrawLog($"{Name} tried to steal from {civilian.Name} but failed!", city, prison);
+                Helpers.DrawLog($"## Thief {Name} tried to steal from {civilian.Name} but failed!", city, prison);
                 return false;
             }
         }

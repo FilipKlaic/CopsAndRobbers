@@ -70,13 +70,11 @@
             // Draw everything on the console
             Place.UpdateDrawing(canvas);
 
-            //MoveCharactersRandomly(characters, city);
-
             // Draw characters with color on top of the field
             foreach (var p in characters)
             {
                 // Ensure character stays inside City borders (avoid frame)
-                if (p.X > 0 && p.X < city.Height - 1 && p.Y > 0 && p.Y < city.Width - 1)
+                if (p.X > 2 && p.X < city.Height - 1 && p.Y > 1 && p.Y < city.Width - 1)
                 {
                     p.Draw(); // Use Charactercolor
                 }
