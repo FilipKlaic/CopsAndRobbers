@@ -70,16 +70,6 @@
             // Draw everything on the console
             Place.UpdateDrawing(canvas);
 
-            // Draw characters with color on top of the field
-            foreach (var p in characters)
-            {
-                // Ensure character stays inside City borders (avoid frame)
-                if (p.X > 2 && p.X < city.Height - 1 && p.Y > 1 && p.Y < city.Width - 1)
-                {
-                    p.Draw(); // Use Charactercolor
-                }
-            }
-
             Helpers.MoveCharactersRandomly(characters, city, prison, canvas);
            
         }

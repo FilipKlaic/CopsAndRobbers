@@ -133,16 +133,15 @@ namespace CopsAndRobbers
                         var thief = p1.RoleName == "Thief" ? (Thief)p1 : (Thief)p2;
                         var police = p1.RoleName == "Police officer" ? (Police)p1 : (Police)p2;
 
-                        //DrawLog($"Police {police.Name} catches Thief {thief.Name}!", city, prison);
-                        //police?.StealFrom(thief, rnd, city, prison);
-                        //Thread.Sleep(1000);
+                        DrawLog($" Police {police.Name} catches Thief {thief.Name}!", city, prison);
+                     
 
                         if (thief.Inventory.Items.Count > 0)
                         {
                             int jailTime = thief.Inventory.Items.Count; // 1 thing = 1 second
                             Console.ForegroundColor = ConsoleColor.Red;
                             DrawLog($"** Police {police.Name} catches {thief.Name}! Sent to prison for {jailTime} seconds.", city, prison);
-
+                            police?.StealFrom(thief, rnd, city, prison);
 
                             // move the thief to prison
                             city.Persons.Remove(thief);
