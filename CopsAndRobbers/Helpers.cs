@@ -30,6 +30,9 @@ namespace CopsAndRobbers
             foreach (var p in characters)
                 previousPositions[p] = (p.X, p.Y);
 
+            bool paused = false;   // pause flag
+            bool running = true;   // exit control flag
+
             // Draw initial characters (on top of already drawn canvas)
             foreach (var p in characters)
             {
@@ -48,6 +51,35 @@ namespace CopsAndRobbers
             // Main loop
             while (true)
             {
+                // check keyboard input without blocking
+                if (Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true).Key;
+
+                    if (key == ConsoleKey.P)
+                    {
+                        paused = !paused; // toggle pause
+                        //Console.ForegroundColor = ConsoleColor.Yellow;
+                        //Console.SetCursorPosition(0, city.Height + prison.Height + 20);
+                        //Console.WriteLine(paused ? " Game paused. Press P to resume..."
+                        //                         : " Game resumed.");
+                        //Console.ResetColor();
+                    }
+                    else if (key == ConsoleKey.Q)
+                    {
+                        //Console.ForegroundColor = ConsoleColor.Red;
+                        //Console.SetCursorPosition(0, city.Height + prison.Height + 22);
+                        //Console.WriteLine(" Exiting simulation...");
+                        //Console.ResetColor();
+                        break; // exit loop
+                    }
+                }
+
+                if (paused)
+                {
+                    Thread.Sleep(200); // slow loop while paused
+                    continue; // skip movement
+                }
                 foreach (var p in characters)
                 {
                     // restore underlying symbol at previous position from canvas (avoid erasing frame)
