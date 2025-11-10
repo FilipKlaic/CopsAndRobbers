@@ -59,18 +59,10 @@ namespace CopsAndRobbers
                     if (key == ConsoleKey.P)
                     {
                         paused = !paused; // toggle pause
-                        //Console.ForegroundColor = ConsoleColor.Yellow;
-                        //Console.SetCursorPosition(0, city.Height + prison.Height + 20);
-                        //Console.WriteLine(paused ? " Game paused. Press P to resume..."
-                        //                         : " Game resumed.");
-                        //Console.ResetColor();
+                        
                     }
                     else if (key == ConsoleKey.Q)
                     {
-                        //Console.ForegroundColor = ConsoleColor.Red;
-                        //Console.SetCursorPosition(0, city.Height + prison.Height + 22);
-                        //Console.WriteLine(" Exiting simulation...");
-                        //Console.ResetColor();
                         break; // exit loop
                     }
                 }
@@ -91,6 +83,21 @@ namespace CopsAndRobbers
                         Console.Write(canvas[prev.X, prev.Y]);
                     }
 
+                    //// choose random step (-1, 0, 1 each)
+                    //int dx = rnd.Next(-1, 2);
+                    //int dy = rnd.Next(-1, 2);
+
+                    //int candidateX = p.X + dx;
+                    //int candidateY = p.Y + dy;
+
+                    //// clamp to safe area (so characters never go on borders)
+                    //candidateX = Math.Max(safeTop, Math.Min(candidateX, safeBottom));
+                    //candidateY = Math.Max(safeLeft, Math.Min(candidateY, safeRight));
+
+                    //// update model position
+                    //p.X = candidateX;
+                    //p.Y = candidateY;
+
                     // choose random step (-1, 0, 1 each)
                     int dx = rnd.Next(-1, 2);
                     int dy = rnd.Next(-1, 2);
@@ -98,9 +105,16 @@ namespace CopsAndRobbers
                     int candidateX = p.X + dx;
                     int candidateY = p.Y + dy;
 
-                    // clamp to safe area (so characters never go on borders)
-                    candidateX = Math.Max(safeTop, Math.Min(candidateX, safeBottom));
-                    candidateY = Math.Max(safeLeft, Math.Min(candidateY, safeRight));
+                    // wrap-around (teleport to other side if outside city)
+                    if (candidateX < safeTop)
+                        candidateX = safeBottom - 1;
+                    else if (candidateX > safeBottom - 1)
+                        candidateX = safeTop;
+
+                    if (candidateY < safeLeft)
+                        candidateY = safeRight - 1;
+                    else if (candidateY > safeRight - 1)
+                        candidateY = safeLeft;
 
                     // update model position
                     p.X = candidateX;
