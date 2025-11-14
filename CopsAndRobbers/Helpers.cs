@@ -83,21 +83,6 @@ namespace CopsAndRobbers
                         Console.Write(canvas[prev.X, prev.Y]);
                     }
 
-                    //// choose random step (-1, 0, 1 each)
-                    //int dx = rnd.Next(-1, 2);
-                    //int dy = rnd.Next(-1, 2);
-
-                    //int candidateX = p.X + dx;
-                    //int candidateY = p.Y + dy;
-
-                    //// clamp to safe area (so characters never go on borders)
-                    //candidateX = Math.Max(safeTop, Math.Min(candidateX, safeBottom));
-                    //candidateY = Math.Max(safeLeft, Math.Min(candidateY, safeRight));
-
-                    //// update model position
-                    //p.X = candidateX;
-                    //p.Y = candidateY;
-
                     // choose random step (-1, 0, 1 each)
                     int dx = rnd.Next(-1, 2);
                     int dy = rnd.Next(-1, 2);
@@ -186,7 +171,7 @@ namespace CopsAndRobbers
                         {
                             int jailTime = thief.Inventory.Items.Count; // 1 thing = 1 second
                             Console.ForegroundColor = ConsoleColor.Red;
-                            DrawLog($"** Police {police.Name} catches {thief.Name}! Sent to prison for {jailTime} seconds.", city, prison);
+                            DrawLog($"** Police {police.Name} catches Thief {thief.Name}! Sent to prison for {jailTime} seconds.", city, prison);
                             police?.StealFrom(thief, rnd, city, prison);
 
                             // move the thief to prison
@@ -314,7 +299,7 @@ namespace CopsAndRobbers
             Console.Write(new string(' ', Console.WindowWidth));
             Console.SetCursorPosition(0, logStartRow);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"=======CITY STATS:=========================================");
+            Console.WriteLine($"======= CITY STATS =========================================");
             Console.SetCursorPosition(0, logStartRow + 1);
             Console.WriteLine($"  Police: {policeCount}");
             Console.WriteLine($"  Thieves: {thiefCount}");
@@ -322,7 +307,7 @@ namespace CopsAndRobbers
             Console.WriteLine($"  In Prison: {prisonCount}");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("=======NEWS================================================");
+            Console.WriteLine("======= NEWS ================================================");
             Console.ResetColor();
 
         }

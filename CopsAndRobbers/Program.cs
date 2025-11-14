@@ -14,36 +14,36 @@
             // Create characters without coordinates
             List<Person> characters = new List<Person>
             {
-        new Civilian(0,0,"Jonsson"),
-        new Civilian(0,0,"Svensson"),
-        new Civilian(0,0,"Olofsson"),
-        new Civilian(0,0,"Jonsson2"),
-        new Civilian(0,0,"Svensson2"),
-        new Civilian(0,0,"Olofsson2"),
-        new Civilian(0,0,"Jonsson3"),
-        new Civilian(0,0,"Sixtesson"),
-        new Civilian(0,0,"Svedberg"),
-        new Civilian(0,0,"Bergman"),
-        new Civilian(0,0,"Bilsson"),
-        new Civilian(0,0,"Nilsson3"),
-        new Civilian(0,0,"Johanesson"),
-        new Civilian(0,0,"Andersson"),
-        new Civilian(0,0,"Sturesson"),
-        new Thief(0,0,"Silverstedt2"),
-        new Thief(0,0,"Brorson2"),
-        new Thief(0,0,"Olsson2"),
-        new Thief(0,0,"Silverstedt"),
-        new Thief(0,0,"Brorson"),
-        new Thief(0,0,"Olsson"),
-        new Thief(0,0,"Silverstedt3"),
-        new Thief(0,0,"Brorson3"),
-        new Thief(0,0,"Olsson3"),
-        new Police(0,0,"Johansson2"),
-        new Police(0,0,"Karlsson2"),
-        new Police(0,0,"Nilsson2"),
-        new Police(0,0,"Johansson"),
-        new Police(0,0,"Karlsson"),
-        new Police(0,0,"Nilsson")
+        new Civilian(5,5,"Jonsson"),
+        new Civilian(5,5,"Svensson"),
+        new Civilian(5,5,"Olofsson"),
+        new Civilian(5,5,"Jonsson2"),
+        new Civilian(5,5,"Svensson2"),
+        new Civilian(5,5,"Olofsson2"),
+        new Civilian(5,5,"Jonsson3"),
+        new Civilian(5,5,"Sixtesson"),
+        new Civilian(5,5,"Svedberg"),
+        new Civilian(5,5,"Bergman"),
+        new Civilian(5,5,"Bilsson"),
+        new Civilian(5,5,"Nilsson3"),
+        new Civilian(5,5,"Johanesson"),
+        new Civilian(5,5,"Andersson"),
+        new Civilian(5,5,"Sturesson"),
+        new Thief(10,10,"Silverstedt2"),
+        new Thief(10,10,"Brorson2"),
+        new Thief(10,10,"Olsson2"),
+        new Thief(10,10,"Silverstedt"),
+        new Thief(10,10,"Brorson"),
+        new Thief(10,10,"Olsson"),
+        new Thief(10,10,"Silverstedt3"),
+        new Thief(10,10,"Brorson3"),
+        new Thief(10,10,"Olsson3"),
+        new Police(20,20,"Johansson2"),
+        new Police(20,20,"Karlsson2"),
+        new Police(20,20,"Nilsson2"),
+        new Police(20,20,"Johansson"),
+        new Police(20,20,"Karlsson"),
+        new Police(20,20,"Nilsson")
         
        
     };
@@ -55,8 +55,8 @@
             // Assign random positions inside the City
             foreach (var p in characters)
             {
-                p.X = rnd.Next(1, city.Height - 1); // rows, avoid borders
-                p.Y = rnd.Next(1, city.Width - 1);  // columns, avoid borders
+                p.X = rnd.Next(2, city.Height - 1); // rows, avoid borders
+                p.Y = rnd.Next(2, city.Width - 1);  // columns, avoid borders
             }
 
             // Determine total canvas size
